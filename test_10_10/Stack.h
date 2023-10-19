@@ -11,4 +11,5 @@ namespace wr
   }ST;
 
   void StackInit(ST* ps);
+  void StackPush(ST* ps, int x);
 }
