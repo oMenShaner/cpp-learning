@@ -262,20 +262,81 @@
 //
 //    return 0;
 //}
+//#include <iostream>
+//
+//using namespace std;
+//
+//int main()
+//{
+//    int a;
+//    double b;
+//    char c;
+//
+//    cin >> a >> b >> c;
+//    cout << a << endl;
+//    cout << b << endl;
+//    cout << c << endl;
+//
+//    return 0;
+//}
+//#include <iostream>
+//
+//using namespace std;
+//
+//void Func(int a = 0)
+//{
+//  cout << a << endl;
+//}
+//
+//int main()
+//{
+//  Func();   // 没有指定实参, 默认使用缺省值
+//  Func(10); // 指定了实参, 则使用指定的实参
+//
+//  return 0;
+//}
+//#include <iostream>
+//
+//using namespace std;
+//
+//void Func(int a = 1, int b = 2, int c = 3)
+//{
+//    cout << a << endl;
+//    cout << b << endl;
+//    cout << c << endl;
+//    cout << endl;
+//}
+//
+//int main()
+//{
+//    Func();
+//    Func(20);
+//    Func(20, 30);
+//    Func(20, 30, 40);
+//
+//    return 0;
+//}
 #include <iostream>
 
 using namespace std;
+int i = 10;
+int j = 20;
 
-int main()
+void Func(int a = i, int b = j, int c = 3)
 {
-    int a;
-    double b;
-    char c;
-
-    cin >> a >> b >> c;
     cout << a << endl;
     cout << b << endl;
     cout << c << endl;
+    cout << endl;
+}
+
+int main()
+{
+    Func();     //a = 10; b = 20; c = 3;
+    
+    i = 100;
+    int j = 200;
+    Func();     //a = 100; b = 20; c = 3;
 
     return 0;
 }
