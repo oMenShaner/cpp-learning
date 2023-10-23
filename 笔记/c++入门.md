@@ -836,6 +836,205 @@ void SListPushBack(PLTNode& phead, SLDataType x);
 > 引用使代码看起来更简洁
 
 ### 引用作返回值
+关于指针我们学过, 不能用函数不能返回一个局部变量的指针, 同样引用也是不可以的.
 
+如果将局部变量引用返回赋值给一个普通变量, 不会出现问题.
+```cpp
+int& count()
+{
+    int n = 0;
+    n++;
+    //...
 
+    return n;
+}
 
+int main()
+{
+    int ret = count();
+    cout << ret << endl;
+    cout << ret << endl;
+
+    return 0;
+}
+```
+![1698068057601](image/c++入门/1698068057601.png)
+***
+但如果将引用变量与函数中的局部变量进行绑定, 就会出现不可预料的后果:
+```cpp
+int& count()
+{
+    int n = 0;
+    n++;
+    //...
+
+    return n;
+}
+
+int main()
+{
+    int& ret = count();
+    cout << ret << endl;
+    cout << ret << endl;
+    cout << ret << endl;
+
+    return 0;
+}
+```
+![1698068192857](image/c++入门/1698068192857.png)
+将 `ret` 与 函数中局部变量 `n` 进行绑定, 此时 `ret` 是 `n` 的别名.
+但是函数调用完毕后, 已经将变量 `n` 所处的这块内存空间归还给操作系统了, 此时打印 `ret` 的值相当于打印这块内存空间的值.
+
+我们都知道, 函数调用首先将当前栈顶指针压入栈顶, 接着开辟需要用到的栈帧空间.此时 `n` 就在这块临时开辟的栈帧空间里. 当函数调用完毕后, 执行 `ret`指令, 先将栈帧空间归还给操作系统, 再将原来的栈顶指针和栈底指针恢复.
+
+这个时候, `n` 所在内存空间已经不确定究竟存放了什么, 后序如果调用了其他函数, 这块空间就更不知道会存放什么了.
+
+> 所以, 不能将一个局部对象用引用返回, 会出现不可预料的后果.
+
+***
+那么, 什么样的对象可以在函数用引用返回呢?
+
+自然是函数调用完毕后, 不会被销毁的对象. 
+
+例如: `static`, 全局变量等
+```cpp
+int& count()
+{
+    static int n = 0;
+    n++;
+    //...
+
+    return n;
+}
+
+int main()
+{
+    int& ret = count();
+    cout << ret << endl;
+    cout << ret << endl;
+    count();
+    cout << ret << endl;
+
+    return 0;
+}
+```
+![1698068901734](image/c++入门/1698068901734.png)
+第二次调用 `count()`, 修改了静态变量 `n` 的值, 那么 `n` 的别名 `ret` 必然也被修改了. 因为它们所指的内存空间是一样的.
+
+***
+下面这段代码的错误输出也就很好理解了, 这也是对于局部对象的错误引用导致的错误:
+```cpp
+int& Add(int a, int b)
+{
+    int c = a + b;
+
+    return c;
+}
+
+int main()
+{
+    int& ret = Add(1, 2);
+    Add(3, 4);
+    cout << "Add(1, 2) is " << ret << endl;
+
+    return 0;
+}
+```
+![1698069174202](image/c++入门/1698069174202.png)
+两次调用 `Add` 函数所开辟的栈帧空间是一样的, 恰好局部变量 `c` 一直在那一块内存空间中, 这样 `c` 的别名 `ret` 的值自然是第二次调用后 `c` 的值 : 7
+
+可以如此验证:
+```cpp
+void fun1()
+{
+    int a = 0;
+    cout << &a << endl;
+}
+
+void fun2()
+{
+    int b = 0;
+    cout << &b << endl;
+}
+
+int main()
+{
+    fun1();
+    fun2();
+    fun1();
+
+    return 0;
+}
+```
+可以看到地址都是一样的.
+![1698069662768](image/c++入门/1698069662768.png)
+
+> 综上: <font color='red'> 如果函数返回时, 出了函数作用域, 如果返回对象还在(没归还给操作系统), 那么可以用引用返回. 如果已经销毁还给操作系统了, 只能传值返回</font>
+
+***
+## 传值、传引用效率比较
+> 以值作为参数或者返回值类型, 在传参和返回期间, 函数不会直接传递实参或者变量本身返回, 而是传递实参或者返回变量的一份临时拷贝, 因此值作为参数或者返回值类型, 效率是十分低效的. 
+
+> 之前学过传址操作可以解决这个问题, 现在多了一个方法: 传引用
+
+下面可以看出传引用的效率比传值高多了
+```cpp
+#include <time.h>
+struct A{ int a[10000]; };
+void TestFunc1(A a){}
+void TestFunc2(A& a){}
+void TestRefAndValue()
+{
+ A a;
+ // 以值作为函数参数
+ size_t begin1 = clock();
+ for (size_t i = 0; i < 10000; ++i)
+ TestFunc1(a);
+ size_t end1 = clock();
+ // 以引用作为函数参数
+ size_t begin2 = clock();
+ for (size_t i = 0; i < 10000; ++i)
+ TestFunc2(a);
+ size_t end2 = clock();
+// 分别计算两个函数运行结束后的时间
+ cout << "TestFunc1(A)-time:" << end1 - begin1 << endl;
+ cout << "TestFunc2(A&)-time:" << end2 - begin2 << endl;
+}
+
+A a;
+// 值返回
+A TestFunc1() { return a;}
+// 引用返回
+A& TestFunc2(){ return a;}
+void TestReturnByRefOrValue()
+{
+ // 以值作为函数的返回值类型
+ size_t begin1 = clock();
+ for (size_t i = 0; i < 100000; ++i)
+ TestFunc1();
+ size_t end1 = clock();
+ // 以引用作为函数的返回值类型
+ size_t begin2 = clock();
+ for (size_t i = 0; i < 100000; ++i)
+ TestFunc2();
+ size_t end2 = clock();
+ // 计算两个函数运算完成之后的时间
+ cout << "TestFunc1 time:" << end1 - begin1 << endl;
+ cout << "TestFunc2 time:" << end2 - begin2 << endl;
+}
+
+int main()
+{
+    TestRefAndValue();
+    TestReturnByRefOrValue();
+
+    return 0;
+}
+```
+
+![1698070508162](image/c++入门/1698070508162.png)
+传引用几乎不耗时间.
+
+## 引用的作用
+
+## 常引用 (const 与 引用)
