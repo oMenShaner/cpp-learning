@@ -10,3 +10,4 @@ typedef struct A
 void f(int a, char b);
 void f(char a, int b);
 void f(A a);
+

@@ -203,15 +203,28 @@ using namespace std;
 //
 //  return 0;
 //}
+//int main()
+//{
+//    int a = 0;
+//
+//    int& ra = a;
+//    ra = 20;
+//
+//    int* pa = &a;
+//    *pa = 20;
+//
+//    return 0;
+//}
+
+__attribute__((always_inline)) int Add(int left, int right)
+{
+    return left + right;
+}
+
 int main()
 {
-    int a = 0;
-
-    int& ra = a;
-    ra = 20;
-
-    int* pa = &a;
-    *pa = 20;
+    int ret = 0;
+    ret = Add(1, 2);
 
     return 0;
 }
