@@ -14,3 +14,4 @@ void f(A a)
 {
   cout << "f(A a)" << endl;
 }
+
