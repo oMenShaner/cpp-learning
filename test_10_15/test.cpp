@@ -138,40 +138,80 @@
 //
 //  return 0;
 //}
-#include <iostream>
+//#include <iostream>
+//
+//using namespace std;
+//
+//int main()
+//{
+//  // 权限不变
+//  int a = 0;
+//  int& ra = a;
+//  
+//  const int b = 100;
+//  const int& rb = b;
+//  //rb = 200;           //错误  rb是常变量的别名  不能修改
+//  const int c = 1000; 
+//  //int& rc = c;        //错误  试图让一个非常量引用指向一个常量对象
+//  
+// // 权限缩小是可以的  比如试图让一个常量引用指向一个非常量对象
+//  const int& rra = a;
+//
+// // 追根究底  虽然引用类型规定需要与其所指向的对象一致
+// // 但其实就和类型转换一样  只要指向表达式的类型能够转换成引用类型即可
+//  int i = 42;
+//  const int& r1 = i;      //虽然类型不一样  但是int->const int 
+//  const int& r2 = 42;     //字面量本来就是const int类型的
+//  const int& r3 = r1 * 2; //r3也是个常量引用 直接将r1*2的结果让r3指向
+//
+//  // 原因
+//  double dval = 3.14;
+//  //int& ri = dval;         //err
+//  const int& ri = dval; 
+//  // 为了确保让ri绑定一个整数 编译器将上一代码变成了如下如下形式
+//  // const int temp = dval; //隐式类型转换成一个临时量整形对象
+//  // const int& ri = temp;  //让ri绑定这个临时量
+//  
+//
+//  return 0;
+//}
+//#include <iostream>
+//
+//using namespace std;
+//
+//int main()
+//{
+//  int i = 42;
+//  int& r1 = i;          //引用r1绑定对象i        
+//  const int& r2 = i;    //r2也绑定对象i, 但是不允许通过r2修改i的值
+//  r1 = 50;              //可以通过r1修改i的值
+//  //r2 = 49;            //不可以通过r2修改i的值
+//
+//  return 0;
+//}
+#include<iostream>
 
 using namespace std;
 
+//int main()
+//{
+//  int a = 0;
+//  int& ra = a;
+//
+//  cout << "&a = " << &a << endl;
+//  cout << "&ra = " << &ra << endl;
+//
+//  return 0;
+//}
 int main()
 {
-  // 权限不变
-  int a = 0;
-  int& ra = a;
-  
-  const int b = 100;
-  const int& rb = b;
-  //rb = 200;           //错误  rb是常变量的别名  不能修改
+    int a = 0;
 
-  const int c = 1000; 
-  //int& rc = c;        //错误  试图让一个非常量引用指向一个常量对象
-  
- // 权限缩小是可以的  比如试图让一个常量引用指向一个非常量对象
- const int& rra = a;
+    int& ra = a;
+    ra = 20;
 
- // 追根究底  虽然引用类型规定需要与其所指向的对象一致
- // 但其实就和类型转换一样  只要指向表达式的类型能够转换成引用类型即可
-  int i = 42;
-  const int& r1 = i;      //虽然类型不一样  但是int->const int 
-  const int& r2 = 42;     //字面量本来就是const int类型的
-  const int& r3 = r1 * 2; //r3也是个常量引用 直接将r1*2的结果让r3指向
+    int* pa = &a;
+    *pa = 20;
 
-  // 原因
-  double dval = 3.14;
-  //int& ri = dval;         //err
-  const int& ri = dval; 
-  // 为了确保让ri绑定一个整数 编译器将上一代码变成了如下如下形式
-  // const int temp = dval; //隐式类型转换成一个临时量整形对象
-  // const int& ri = temp;  //让ri绑定这个临时量
-  
-  return 0;
+    return 0;
 }
