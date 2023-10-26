@@ -1,5 +1,8 @@
 #include<iostream>
 #include<typeinfo>
+#include<assert.h>
+#include<stdlib.h>
+#include<stdio.h>
 
 using namespace std;
 
@@ -91,21 +94,114 @@ using namespace std;
 //
 //  return 0;
 //}
-void f(int)
+//void f(int)
+//{
+//    cout << "f(int)" << endl;
+//}
+//
+//void f(int*)
+//{
+//    cout << "f(int*)" << endl;
+//}
+//
+//int main()
+//{
+//    f(0);
+//    f(NULL);
+//    f((int*)NULL);
+//
+//    return 0;
+//}
+//typedef int STDataType;
+//struct Stack
+//{
+//    void Init(size_t capacity)
+//    {
+//        _array = (STDataType*)malloc(sizeof(STDataType) * capacity);
+//        if (nullptr == _array)
+//        {
+//            perror("malloc fail");
+//            return;
+//        }
+//
+//        _capacity = capacity;
+//        _top = 0;
+//    }
+//
+//    void Push(const STDataType& data)
+//    {
+//        _array[_top] = data;
+//        _top++;
+//    }
+//
+//    void Destroy()
+//    {
+//        if (_array)
+//        {
+//            free(_array);
+//            _array = nullptr;
+//            _capacity = _top = 0;
+//        }
+//    }
+//    STDataType* _array;
+//    int _capacity;
+//    int _top;
+//};
+//
+//int main()
+//{
+//    Stack s;
+//    s.Init(10);
+//    s.Push(1);
+//    s.Push(2);
+//    s.Push(3);
+//    s.Push(4);
+//    s.Push(5);
+//
+//    s.Destroy();
+//
+//    return 0;
+//}
+class Date
 {
-    cout << "f(int)" << endl;
-}
-
-void f(int*)
-{
-    cout << "f(int*)" << endl;
-}
+  public:
+    void Init(int year, int month, int day)
+    {
+      _year = year;
+      _month = month;
+      _day = day;
+    }
+    void Print()
+    {
+      cout << _year << '-' << _month << '-' << _day << endl;
+    }
+  private:
+    int _year;
+    int _month;
+    int _day;
+};
 
 int main()
 {
-    f(0);
-    f(NULL);
-    f((int*)NULL);
+  Date d;
+  d.Init(2020, 1, 1);
+  d.Print();
 
-    return 0;
+  return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
