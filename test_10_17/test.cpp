@@ -162,46 +162,121 @@ using namespace std;
 //
 //    return 0;
 //}
-class Date
+//class Date
+//{
+//  public:
+//    void Init(int year, int month, int day)
+//    {
+//      _year = year;
+//      _month = month;
+//      _day = day;
+//    }
+//    void Print()
+//    {
+//      cout << _year << '-' << _month << '-' << _day << endl;
+//    }
+//  private:
+//    int _year;
+//    int _month;
+//    int _day;
+//};
+//
+//int main()
+//{
+//  Date d;
+//  d.Init(2020, 1, 1);
+//  d.Print();
+//
+//  return 0;
+//}
+//typedef int STDataType;
+//class Stack
+//{
+//    private:
+//        STDataType* _array;
+//        int _capacity;
+//        int _top;
+//    public:
+//        void Init(int capacity);
+//        void Push(STDataType x);
+//};
+//
+//class A
+//{
+//    
+//};
+//
+//class B
+//{
+//    private:
+//        char _a;
+//    public:
+//        void printB()
+//        {
+//            cout << _a << endl;
+//        }
+//};
+//
+//class C
+//{
+//    private:
+//        char _a;
+//};
+//
+//int main()
+//{
+//    Stack st;   //类实例化一个对象
+//    cout << sizeof(st) << endl;
+//    cout << sizeof(Stack) << endl;
+//    cout << sizeof(A) << endl;
+//    cout << sizeof(B) << endl;
+//    cout << sizeof(C) << endl;
+//
+//    return 0;
+//}
+//class Date
+//{
+//    public:
+//        void Init(int year, int month, int day)
+//        {
+//            _year = year;
+//            _month = month;
+//            _day = day;
+//        }
+//        void Print()
+//        {
+//            cout << _year << '-' << _month << '-' << _day << endl;
+//        }
+//    private:
+//        int _year;
+//        int _month;
+//        int _day;
+//};
+//
+//int main()
+//{
+//    Date d1, d2;
+//    d1.Init(2000, 1, 1);
+//    d2.Init(2010, 10, 10);
+//    d1.Print();
+//    d2.Print();
+//
+//    return 0;
+//}
+class A
 {
-  public:
-    void Init(int year, int month, int day)
-    {
-      _year = year;
-      _month = month;
-      _day = day;
-    }
-    void Print()
-    {
-      cout << _year << '-' << _month << '-' << _day << endl;
-    }
-  private:
-    int _year;
-    int _month;
-    int _day;
+public:
+	void Print()
+	{
+		cout << _a << endl;
+	}
+private:
+	int _a;
 };
 
 int main()
 {
-  Date d;
-  d.Init(2020, 1, 1);
-  d.Print();
-
-  return 0;
+	A* p = nullptr;
+	p->Print();
+	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
