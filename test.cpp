@@ -1,101 +1,69 @@
 #include <iostream>
 #include <stdlib.h>
-#include <vector>
 
 using namespace std;
-
-int maxSum1D(vector<int>& nums, int n)
+void InsertSort(int n, double w[], double v[])
 {
-  int sums = 0;
-  vector<int> temp(n+1, 0);
-  for (int i = 1; i <= n; i++) 
+	int max1;
+	double t[20];
+
+  for(int i = 1; i <= n; i++)
   {
-    if (nums[i] >= 0) 
-    { 
-      temp[i] = temp[i - 1] + nums[i];
-    }
-    else 
+		t[i] = v[i] / w[i];
+	}
+	for(int i = 1; i <= n; i++)
+  {
+		max1 = i;
+		for(int j = i+1; j <= n; j++)
     {
-      temp[i] = temp[i - 1];
-    }
-    if (temp[i] > sums)
-    {
-      sums = temp[i];
-    }
-  }
-    return sums;
+			if(t[j] > t[max1]) 
+      {
+				max1 = j;
+			}
+		}
+		swap(t[i], t[max1]);
+		swap(w[i], w[max1]);
+		swap(v[i], v[max1]);
+	}
+	for(int i = 1; i <= n; i++)
+  {
+		cout<<t[i]<<endl;
+	}
 }
 
-int maxSum2D(vector<vector<int>>& nums, int n, int m) 
-{
-  int sums = 0;
-  for (int i = 1; i <= n; i++) 
+void knapsack_greedy(int n,double c,double w[],double v[],double b[]){
+	int j;
+	InsertSort(n,w,v);
+	for(int i = 1; i <= n; i++)//初始化背包b[]
+		b[i] = 0;
+	for(j = 1; j <= n; j++) 
   {
-    vector<int> temp(m + 1, 0);
-    int j = i;
-    while (j <= n)
-    {
-      for (int k = 1; k <= m; k++) 
-      {
-        temp[k] += nums[j][k];
-      }
-      int tempSum = maxSum1D(temp, m);
-      if (tempSum > sums) 
-      {
-        sums = tempSum;
-      }
-      j++;
-    }
-  }
-  return sums;
-}
-
-int maxSum3D(vector<vector<vector<int>>>& nums, int n, int m, int p) 
-{
-  int sums = 0;
-  for (int i = 1; i <= p; i++) 
+		if(c < w[j]) 
+      break;
+		b[j] = 1;
+		c = c - w[j];
+	} 
+	if(j <= n)
+		b[j] = c / w[j];
+	cout << "输出：" <<endl;
+	for(int i = 1;i <= n; i++)
   {
-    vector<vector<int>> temp(m + 1, vector<int>(n + 1, 0));
-    int j = i;
-    while (j <= p) 
-    {
-      for (int k = 1; k <= m; k++) 
-      {
-        for (int l = 1; l <= n; l++) 
-        {
-          temp[k][l] += nums[j][k][l];
-        }
-      }
-      int tempSum = maxSum2D(temp, n, m);
-      if (tempSum > sums) 
-      {
-        sums = tempSum;
-      }
-      j++;
-    }
-  }
-  return sums;
+		cout << "物品重量为：" << w[i] << " " << "物品比例" << b[i] << endl;
+	}
 }
 
 int main()
 {
-  int m, n, p;
-  cin >> m >> n >> p;
-  vector<vector<vector<int>>> dp(m + 1, vector<vector<int>>(n + 1, vector<int>(p + 1, 0)));
-  
-  // 读入数据
-  for (int i = 1; i <= m; i++)
-  {
-    for (int j = 1; j <= n; j++)
-    {
-      for (int k = 1; k <=p; k++)
-      {
-        cin >> dp[i][j][k];
-      }
-    }
-  }
-
-  cout << maxSum3D(dp, n, m, p) << endl;
-
-  return 0;
+	int n,c;
+	double b[20],w[20],v[20];
+	cout<<"输入物品数量和背包容量：";
+	cin>>n>>c;
+	cout<<"输入物品重量（如：30 10 20）："; 
+	for(int i=1;i<=n;i++)
+		cin>>w[i];
+	cout<<"输入物品的价值（如：120 60 100）："; 
+	for(int i=1;i<=n;i++)
+		cin>>v[i];
+	knapsack_greedy(n,c,w,v,b);	
+	return 0;
 }
