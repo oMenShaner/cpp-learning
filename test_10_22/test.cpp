@@ -188,42 +188,159 @@ using namespace std;
 //    d2.Print();
 //    return 0;
 //}
+//class Date
+//{
+//public:
+//    // 构造函数
+//    Date(int year, int minute, int day)
+//    {
+//        cout << "Date(int, int, int)"<< this << endl;
+//    }
+//
+//    // 拷贝构造函数
+//    Date(const Date& d)
+//    {
+//        cout << "Date(const Date& d)" << this << endl;
+//    }
+//
+//    // 析构函数
+//    ~Date()
+//    {
+//        cout << "~Date()" << this << endl;
+//    }
+//private:
+//    int _year;
+//    int _month;
+//    int _day;
+//};
+//
+//Date Test(Date d)
+//{
+//    Date temp(d);
+//    return temp; 
+//}
+//
+//int main()
+//{
+//    Date d1(2000, 1, 1);
+//    Test(d1);
+//
+//    return 0;
+//}
 class Date
 {
-public:
-    // 构造函数
-    Date(int year, int minute, int day)
-    {
-        cout << "Date(int, int, int)"<< this << endl;
-    }
-
-    // 拷贝构造函数
-    Date(const Date& d)
-    {
-        cout << "Date(const Date& d)" << this << endl;
-    }
-
-    // 析构函数
-    ~Date()
-    {
-        cout << "~Date()" << this << endl;
-    }
 private:
-    int _year;
-    int _month;
-    int _day;
+    int _year = 1970;
+    int _month = 1;
+    int _day = 1;
+
+public:
+    Date()
+    {
+
+    }
+    // 构造函数
+    Date(int year, int month, int day)
+    {
+        _year = year;
+        _month = month;
+        _day = day;
+    }
+  
+    void Print()
+    {
+      cout << _year << '-' << _month << '-' << _day << endl;
+    }
+
+    bool operator==(const Date& d)
+    {
+      return _year == d._year
+        && _month == d._month
+        && _day == d._day;
+    }
+    
+    int getMonthDay(int year, int month)
+    {
+        int day[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+
+        // 如果是二月且是闰年
+        if (month == 2 && ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)))
+        {
+            return 29;
+        }
+
+        return day[month];
+    }
+
+    bool operator>(const Date& d)
+    {
+        if (_year > d._year)
+            return true;
+        if (_month > d._month)
+            return true;
+        if (_day > d._month)
+            return true;
+        return false;
+    }
+
+    Date& operator+=(int day)
+    {
+      _day += day;
+      // 如果日超了
+      if (_day > getMonthDay(_year, _month))
+      {
+        _day -= getMonthDay(_year, _month);
+        _month++;
+        // 如果月超了
+        if (_month == 13)
+        {
+          _year++;
+          _month = 1;
+        }
+      }
+      
+      return *this;
+    }
+
+    Date operator+(int day) 
+    {
+      Date temp(*this); // 用 *this 拷贝构造 temp 
+      temp += day;      // 直接调用运算符重载 +=
+      
+      return temp;
+    }
 };
 
-Date Test(Date d)
-{
-    Date temp(d);
-    return temp; 
-}
+//bool operator==(const Date& d1, const Date& d2)
+//{
+//    return d1._year == d2._year
+//    && d1._month == d2._month
+//    && d1._day == d2._day;
+//}
 
 int main()
 {
-    Date d1(2000, 1, 1);
-    Test(d1);
+    Date d1;
+    Date d2(2023, 1, 1);
+    Date d3(1970, 1, 1);
+
+    // 可以写成函数调用的形式
+    //cout << d1.operator==(d2) << endl;
+
+    // 最好写成正常运算符的形式, 编译器会自己转化成运算符重载函数
+    //cout << (d1 == d3) << endl;
+    
+    //cout << (d1 > d2) << endl; 
+    //cout << (d2 > d3) << endl;
+  
+    cout << "d2 += 40前:"; d2.Print();
+    d2 += 40;
+    cout << "d2 += 40后:"; d2.Print();
+
+    cout << "d1 + 10前:"; d1.Print();
+    d1 + 10;
+    cout << "d1 + 10后:"; d1.Print();
 
     return 0;
 }
+
