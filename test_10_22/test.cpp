@@ -229,36 +229,8 @@ using namespace std;
 //}
 class Date
 {
-private:
-    int _year = 1970;
-    int _month = 1;
-    int _day = 1;
-
 public:
-    Date()
-    {
-
-    }
-    // 构造函数
-    Date(int year, int month, int day)
-    {
-        _year = year;
-        _month = month;
-        _day = day;
-    }
-  
-    void Print()
-    {
-      cout << _year << '-' << _month << '-' << _day << endl;
-    }
-
-    bool operator==(const Date& d)
-    {
-      return _year == d._year
-        && _month == d._month
-        && _day == d._day;
-    }
-    
+    // 获取某年某月的天数
     int getMonthDay(int year, int month)
     {
         int day[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
@@ -272,17 +244,47 @@ public:
         return day[month];
     }
 
-    bool operator>(const Date& d)
+    // 打印
+    void Print()
     {
-        if (_year > d._year)
-            return true;
-        if (_month > d._month)
-            return true;
-        if (_day > d._month)
-            return true;
-        return false;
+      cout << _year << '-' << _month << '-' << _day << endl;
     }
 
+    // 全缺省的构造函数
+    Date(int year = 1900, int month = 1, int day = 1)
+    {
+        _year = year;
+        _month = month;
+        _day = day;
+    }
+  
+    // 拷贝构造函数
+    Date(const Date& d)
+    {
+      _year = d._year;
+      _month = d._month;
+      _day = d._day;
+    }
+
+    // 析构函数
+    ~Date()
+    {
+      _year = _month = _day = 0;
+    }
+
+    // 赋值运算符重载
+    Date& operator=(const Date& d)
+    {
+      if (this != &d)
+      {
+        _year = d._year;
+        _month = d._month;
+        _day = d._day;
+      }
+      return *this;
+    }
+    
+    // 日期 += 天数
     Date& operator+=(int day)
     {
       _day += day;
@@ -302,6 +304,7 @@ public:
       return *this;
     }
 
+    // 日期 + 天数
     Date operator+(int day) 
     {
       Date temp(*this); // 用 *this 拷贝构造 temp 
@@ -309,6 +312,117 @@ public:
       
       return temp;
     }
+
+    // 日期 -= 天数
+    Date& operator-=(int day)
+    {
+      _day -= day;
+      // 如果天数不够，用前一个月的天数补
+      while (_day <= 0)
+      {
+        _month--;
+        if (_month == 0)
+        {
+          _year--;
+          _month = 12;
+        }
+        _day += getMonthDay(_year, _month);
+      }
+      return *this;
+    }
+    
+    // 日期 - 天数
+    Date operator-(int day)
+    {
+      Date temp(*this);
+      temp -= day;
+
+      return temp;
+    }
+
+    // > 运算符重载
+    bool operator>(const Date& d)
+    {
+        if (_year > d._year)
+            return true;
+        if (_month > d._month)
+            return true;
+        if (_day > d._month)
+            return true;
+        return false;
+    }
+    
+    // 前置++
+    Date& operator++()
+    {
+      *this += 1;
+
+      return *this;
+    }
+
+    // 后置++
+    Date operator++(int)
+    {
+      Date temp(*this);
+      *this += 1;
+      
+      return temp;
+    }
+    // 后置--
+    Date operator--(int)
+    {
+      Date temp(*this);
+      *this -= 1;
+
+      return temp;
+    }
+
+    // 前置--
+    Date& operator--()
+    {
+      *this -= 1;
+
+      return *this;
+    }
+
+    // == 运算符重载
+    bool operator==(const Date& d)
+    {
+      return _year == d._year
+        && _month == d._month
+        && _day == d._day;
+    }
+    
+    // >= 运算符重载
+    bool operator>=(const Date& d)
+    {
+      return (*this > d) || (*this == d);
+    }
+
+    // < 运算符重载
+    bool operator<(const Date& d)
+    {
+      return !(*this >= d);
+    }
+  
+    // <= 运算符重载
+    bool operator<=(const Date& d)
+    {
+      return (*this < d) || (*this == d);
+    }
+
+    // != 运算符重载
+    bool operator!=(const Date& d)
+    {
+      return !(*this == d);
+    }
+
+    // 日期 - 日期 返回天数
+    int operator-(const Date& d);
+private:
+    int _year;
+    int _month;
+    int _day;
 };
 
 //bool operator==(const Date& d1, const Date& d2)
@@ -322,7 +436,7 @@ int main()
 {
     Date d1;
     Date d2(2023, 1, 1);
-    Date d3(1970, 1, 1);
+    Date d3(1900, 1, 1);
 
     // 可以写成函数调用的形式
     //cout << d1.operator==(d2) << endl;
@@ -340,6 +454,17 @@ int main()
     cout << "d1 + 10前:"; d1.Print();
     d1 + 10;
     cout << "d1 + 10后:"; d1.Print();
+
+    d2 = d1;
+    d2.Print();
+
+    (d2 - 40).Print();
+    (d2 - 50).Print();
+    d2.Print();
+
+    cout << (d1 != d3) << endl;
+    cout << (d1 >= d3) << endl;
+    cout << (d1 <= d3) << endl;
 
     return 0;
 }
