@@ -44,11 +44,35 @@ void Test3()
 
 }
 
+void Test4()
+{
+  Date d1(2023, 11, 1);
+
+  cout << "d1++.Print(): "; (d1++).Print();
+  cout << "++d1.Print(): "; (++d1).Print();
+  cout << "d1--.Print(): "; d1--.Print();
+  cout << "--d1.Print(): "; (--d1).Print(); 
+}
+
+void Test5()
+{
+  Date d1(2023, 11, 2);
+  Date d2(2024, 12, 25);
+  Date d3(2024, 5, 5);
+  Date d4(2100, 1, 1);
+
+  cout << d2 - d1 << endl;
+  cout << d3 - d1 << endl;
+  cout << d4 - d1 << endl;
+}
+
 int main()
 {
   //Test1();
   //Test2();
-  Test3();
+  //Test3();
+  //Test4();
+  Test5();
 
   return 0;
 }

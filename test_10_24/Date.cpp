@@ -157,7 +157,7 @@ Date& Date::operator--()
 Date Date::operator--(int)
 {
   Date temp(*this);
-  *this += 1;
+  *this -= 1;
 
   return temp;
 }
@@ -166,9 +166,9 @@ bool Date::operator>(const Date& d)
 {
   if (_year > d._year)
     return true;
-  if (_month > d._month)
+  else if (_year == d._year && _month > d._month)
     return true;
-  if (_day > d._day)
+  else if (_year == d._year && _month == d._month && _day > d._day)
     return true;
 
   return false;
@@ -179,7 +179,6 @@ bool Date::operator==(const Date& d)
   return _year == d._year &&
       _month == d._month &&
       _day == d._day;
-
 }
     
 bool Date::operator>=(const Date& d)
@@ -202,4 +201,74 @@ bool Date::operator!=(const Date& d)
   return !(*this == d);
 }
     
-//int operator-(const Date& d)
+//int Date::operator-(const Date& d)
+//{
+//  // 左大右小 flag = 1
+//  int flag = 1;
+//  Date max(*this);
+//  Date min(d);
+//  
+//  if (max < min)
+//  {
+//    min = *this;
+//    max = d;
+//    flag = -1;
+//  }
+//
+//  int n = 0;
+//  while (min < max)
+//  {
+//    min++;
+//    n++;
+//  }
+//  
+//  return n * flag;
+//}
+//
+
+int Date::operator-(const Date& d)
+{
+  Date d1(_year, 1, 1);
+  Date d2(d._year, 1, 1);
+
+  // 算出日的差距
+  int diff = (_day - 1) - (d._day - 1);
+
+  // 加上月份的差距
+  int i = 1;
+  for (i = 1; i < _month; i++)
+  {
+    diff += getMonthDay(_year, i);
+  }
+
+  for (i = 1; i < d._month; i++)
+  {
+    diff -= getMonthDay(d._year, i);
+  }
+ 
+  // 加上年的差距
+  int flag = 1;
+  int max = _year;
+  int min = d._year;
+  if (max < min)
+  {
+    max = d._year;
+    min = _year;
+    flag = -1;
+  }
+ 
+  while (min < max)
+  {
+    if ((min%4==0 && min%100!=0) || (min%400==0))
+    {
+      diff += flag * 366;
+    }
+    else 
+    {
+      diff += flag * 365;
+    }
+    min++;
+  }
+
+  return diff;
+}
