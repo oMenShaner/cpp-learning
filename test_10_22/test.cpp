@@ -432,6 +432,18 @@ private:
 //    && d1._day == d2._day;
 //}
 
+Date& operator=(Date& left, const Date& right)
+{
+  if (&left != &right)
+  {
+    left._year = right._year;
+    left._month = right._month;
+    left._day = right._day;
+  }
+  
+  return left;
+}
+
 int main()
 {
     Date d1;
