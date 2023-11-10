@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(SRC_LIST test.cpp)
 
-add_compile_options(-g -Wunused -fno-elide-constructors)
+set(CMAKE_BUILD_TYPE DEBUG)
+
+add_compile_options(-Wunused -fno-elide-constructors)
 
 add_executable(test ${SRC_LIST})
