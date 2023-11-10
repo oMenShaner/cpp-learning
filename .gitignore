@@ -15,6 +15,7 @@ bin-release/
 *.apk
 
 #过滤掉不想要文件和文件夹
+*.vscode
 *.exe
 *.sln
 *.vcxproj
