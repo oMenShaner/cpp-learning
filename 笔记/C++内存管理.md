@@ -405,7 +405,7 @@ delete(p2);
   1. 在释放的对象空间上执行 N 次析构函数, 完成 N 个对象中资源的清理
   2. 调用 `operator delete[]` 释放空间, 实际在 `operator delete[]` 中调用 `operator delete` 来释放空间
 
-## 六. 定位 new 表达式 (placement-new)
+# 六. 定位 new 表达式 (placement-new)
 
 定位 `new` 表达式是在**已分配的原始内存空间中调用构造函数初始化一个对象**
 
@@ -459,7 +459,7 @@ int main()
 
 ![Alt text](image/C++%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/image-18.png)
 
-## 七. malloc/free 和 new/delete 的区别
+# 七. malloc/free 和 new/delete 的区别
 
 `malloc/free` 和 `new/delete` 的共同点是: 都是从堆上申请空间, 并且需要用户手动释放.
 不同的地方是:
