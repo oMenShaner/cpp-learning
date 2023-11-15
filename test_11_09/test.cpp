@@ -185,17 +185,69 @@ using std::nullptr_t;
 // }
 
 // 申请一个T类型十个元素的数组并返回
-template <typename T>
-T *f()
+// template <typename T>
+// T *f()
+// {
+//   T *p = new T[10];
+//   return p;
+// }
+//
+// int main()
+// {
+//   int *p1 = f<int>();
+//   double *p2 = f<double>();
+//
+//   return 0;
+// }
+
+// // 专门处理 int 类型的加法函数
+// int Add(const int &left, const int &right)
+// {
+//   cout << "(int) Add" << endl;
+//   return left + right;
+// }
+//
+// // 通用加法函数
+// template <typename T>
+// T Add(const T &left, const T &right)
+// {
+//   cout << "(template) Add" << endl;
+//   return left + right;
+// }
+//
+// int main()
+// {
+//   Add(1, 2.0); // 函数模板不能进行自动类型转换, 只能调用普通函数, 传参的时候进行自动类型转化
+// }
+
+template <class T>
+class Stack
 {
-  T *p = new T[10];
-  return p;
+public:
+  Stack(size_t capacity = 10)
+      : _array(new T[capacity])
+      , _capacity(capacity)
+      , _top(0)
+  {}
+
+  ~Stack();
+  
+  void push(const T &data);
+  //...
+private:
+  T *_array;
+  int _capacity;
+  int _top;
+};
+
+template <class T>
+Stack<T>::~Stack()
+{
+  delete[](_array);
+  _capacity = _top = 0;
 }
 
 int main()
 {
-  int *p1 = f<int>();
-  double *p2 = f<double>();
-
-  return 0;
+  Stack<int> s1;
 }
