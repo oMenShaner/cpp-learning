@@ -249,5 +249,6 @@ Stack<T>::~Stack()
 
 int main()
 {
-  Stack<int> s1;
+
+   Stack<int> s1;
 }
