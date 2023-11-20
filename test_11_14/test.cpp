@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include <assert.h>
 using namespace std;
 
 // int main()
@@ -76,13 +76,74 @@ using namespace std;
 //   return 0;
 // }
 
+// int main()
+// {
+//   string s1 = "hello world!";
+// 
+//   for (size_t i = 0; i < s1.size(); i++)
+//   {
+//     cout << s1[i] << " "; // 使用 operator[] 访问每个字符
+//     // cout << s1.operator[i] << endl;
+//   }
+// 
+//   cout << endl;
+// }
+
+// int main()
+// {
+//   string s1("helloworld");
+// 
+//   for (size_t i = 0; i < s1.size(); i++)
+//   {
+//     ++s1[i];    // 对 s1 的每个字符都加1
+//   }
+// 
+//   cout << s1 << endl;
+// }
+
+// int main()
+// {
+//   string s1("helloworld");
+// 
+//   // [] 访问 s1.size() 越界直接断言
+//   cout << s1[s1.size()+10] << endl;
+// 
+//   return 0;
+// }
+
+// int main()
+// {
+//   string s1 = "Hello,world!";
+// 
+//   string::iterator it = s1.begin();
+//   while (it != s1.end())
+//   {
+//     cout << *it << " ";
+//   }
+// 
+//   cout << endl;
+// }
+
+// int main()
+// {
+//   string s1("Hello,world!");
+// 
+//   string::reverse_iterator it = s1.rbegin();
+//   while (it != s1.rend())
+//   {
+//     cout << *it;
+//     ++it;
+//   }
+// 
+//   cout << endl;
+// }
+
 int main()
 {
-  string s1 = "hello world!";
+  string s1 = "Hello,world";
 
-  for (size_t i = 0; i < s1.size(); i++)
-  {
-    cout << s1[i] << endl;    // 使用 operator[] 访问每个字符
-    // cout << s1.operator[i] << endl;
+  for (auto& e: s1){
+    ++e;
   }
+  cout << s1 << endl;
 }

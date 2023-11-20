@@ -212,3 +212,168 @@ int main()
 范围 `for`| C++11支持更简洁的范围 `for` 的新遍历方式
 
 ### operator[] 和 at() 
+如果想要访问字符串的元素, 可以使用`[]` 来访问, 并使用 `for` 循环来遍历字符串
+```cpp
+int main()
+{
+  string s1 = "hello world!";
+
+  for (size_t i = 0; i < s1.size(); i++)
+  {
+    cout << s1[i]; // 使用 operator[] 访问每个字符
+  }
+
+  cout << endl;
+}
+```
+就像使用 `for` 循环遍历数组一样, 通过 `[]` 解引用访问每一个数组元素.
+
+这里的 `[]` 是**运算符重载**, 同等于下面的形式, 即 `operator[]`, `s1` 通过调用运算符重载来达到访问该位置元素的效果, 传入参数为元素的下标序号(index position)
+
+```cpp
+cout << s1[i];   
+cout << s1.operator[](i) <<;  // 返回下标为 i 的元素的引用
+```
+如果想要修改该位置的元素, 也是可以通过 `[]` 进行修改的
+```cpp
+int main()
+{
+  string s1("helloworld");
+
+  for (size_t i = 0; i < s1.size(); i++)
+  {
+    ++s1[i];    // 对 s1 的每个字符都加1
+  }
+
+  cout << s1 << endl;
+}
+```
+程序结果为: ![Alt text](image/string%E7%B1%BB/image-8.png)
+
+
+`operator[]` 运算符重载有两种形式
+```cpp
+char& operator[] (size_t pos);              // 可读可写
+const char& operator[] (size_t pos) const;  // 只读不可写
+```
+为了让运算符重载支持对原位置元素的修改, 需要返回 `char&` 对原位置元素的引用.
+同时也提供 `cosnt` 版本, 调用运算符重载的对象是一个 `const` 对象时, 通过对原位置的 `const` 引用, 以达到不可修改的作用.
+
+***
+`at()` 和 `[]` 起到的作用都是一样的, 取到下标为 `i` 的元素, 可以对其进行修改.
+
+唯一的区别是两者对越界的处理.
+- `[]` 可以访问 $[0, size]$ 的元素, 如果越界直接**断言**, 程序停止.
+- `at()` 可以访问 $[0, size)$ 的元素, 如果越界会**报异常**, 处理相对温和.
+
+![Alt text](image/string%E7%B1%BB/image-9.png)
+
+![Alt text](image/string%E7%B1%BB/image-10.png)
+
+但一般情况还是 `[]` 用的比较多. 
+
+<font color=red size=4>还有一个需要注意的点</font>: 
+下标的是一个 `size_t` 类型, 即 `string::size_type`. 但一般写 `int` 类型的就可以了. 64位机器下, 对于小于 $2^{63}-1$的下标, `int` 和 `size_t` 是一样的, 如果为了规范, 当然是更推荐写 `size_t` 类型.
+
+***
+
+### 使用迭代器进行遍历
+迭代器(iterator)是 C++ STL的组件之一, 作用是**用来遍历容器**
+
+```cpp
+int main()
+{
+  string s1 = "Hello,world!";
+
+  string::iterator it = s1.begin();
+  while (it != s1.end()){
+    cout << *it << " ";
+    ++it;
+  }
+
+  cout << endl;
+}
+```
+程序运行结果:![Alt text](image/string%E7%B1%BB/image-11.png) 
+
+`iterator` 的用法是指针, 但是不一定是指针, 目前使用它只要像使用指针一样. 
+
+![Alt text](image/string%E7%B1%BB/image-12.png)
+
+`it` 的类型是 `string::iterator`, `iterator` 是 `string` 类的成员变量.
+
+`iterator` 遍历对于像 `string` 这样底层连续的容器看起来不如使用 `[]` 来的直接简便.
+但是对于物理结构非线性的结构却十分高效, 例如链式结构, 树形结构, 哈希结构这样的容器, 是不可以用 `[]` 的形式来遍历访问到每一个元素的. 
+因为 `[]` 在底层本质是通过相对于首元素的偏移量来访问到对应元素的. 而上述结构在物理结构上并不是连续的, 不可以通过偏移量来访问到每个元素. 
+
+<font style="background: red">iterator不用关心底层是怎么实现的, 通用性更强</font>. 上述用来 `iterator` 遍历同样适用于非线性结构.
+
+如果想要反向遍历, 也有对应的 `rbegin` 和 `rend` 使用, 要使用反向迭代器类 `reverse_iterator`
+
+```cpp
+int main()
+{
+  string s1("Hello,world!");
+
+  string::reverse_iterator it = s1.rbegin();
+  while (it != s1.rend()){
+    cout << *it;
+    ++it;
+  }
+
+  cout << endl;
+}
+```
+程序运行结果是:  ![Alt text](image/string%E7%B1%BB/image-14.png)
+![Alt text](image/string%E7%B1%BB/image-15.png)
+***
+下面是 `string` 类的所有迭代器类成员变量 
+![Alt text](image/string%E7%B1%BB/image-13.png)
+如果容器对象是 `const` 对象, 也有对应的 `const_iterator`. 
+<font color=red>不同于 `const iterator` </font>, `const_iterator` 限制的是不可以通过对指向容器的元素进行修改, 而 `const iterator` 则是限定了 `it` 不可以修改, 这显然是不对的.
+
+同样的, `begin` 和 `end`, `rbegin` 和 `rend` 也重载了 `const` 修饰的成员函数
+![Alt text](image/string%E7%B1%BB/image-16.png)
+
+如果不想让迭代器对原数据进行修改, 可以这样定义 `it`
+```cpp
+string::const_iterator it = s1.begin();
+```
+编译器会自动使用 `begin()` 的 `const`形式.
+
+
+C++11 新增了 `cbegin`, `cend`, `crbegin`, `crend`; 这些仅有 `const` 版本, 但是并不实用.
+
+### 范围 for (C++11)
+C++11添加了范围 `for` 的语法, 配合 `auto` 关键字, 可以更为简洁地进行遍历
+
+```cpp
+int main()
+{
+  string s1 = "Hello,world";
+
+  // 编译器将 auto 推导为 string::iterator
+  for (auto e: s1){
+    cout << e;
+  }
+  cout << endl;
+}
+```
+程序运行结果为:  ![Alt text](image/string%E7%B1%BB/image-17.png)
+
+其实底层仍然是使用迭代器进行遍历, 只是看起来更为简洁. 配合 `auto` 可以使整个代码大大缩短, 但是降低了程序可读性.
+
+配合引用, 也可以进行原数据上的修改
+```cpp
+int main()
+{
+  string s1 = "Hello,world";
+
+  for (auto& e: s1){
+    ++e;
+  }
+  cout << s1 << endl;
+}
+```
+程序运行结果为:  ![Alt text](image/string%E7%B1%BB/image-18.png)
+
