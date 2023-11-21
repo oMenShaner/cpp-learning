@@ -102,10 +102,10 @@ int main()
 
 ```cpp
 string(const string& str, size_t pos, size_t len = npos)
-// 用 str 从 $[pos, pos+len)$ 来拷贝构造.
+// 用 str 从 [pos, pos+len) 来拷贝构造.
 // 如果范围超过了 pos位置到字符串末尾的长度, 拷贝到字符串结尾就停止了.
 ```
-这里的 `npos` 是最大的 `size_t`, 在 64 位下就是 $2^{64}-1 = 9223372036854775808$
+这里的 `npos` 是最大的 `size_t`, 在 64 位下就是 $2^{64}-1 = 9223372036854775808$, 它是 `string` 类的静态成员, 使用 `string::npos`
 ![Alt text](image/string%E7%B1%BB/image-4.png)
 
 代码演示:
@@ -141,6 +141,10 @@ string s1 = "Hello string";
 [resize](https://legacy.cplusplus.com/reference/string/string/resize/)|将有效字符的个数改成n个, 多出的空间用字符c填充
 
 ### size() 和 length()
+```cpp
+size_t size() const;
+size_t length() const;
+```
 `size()` 和 `length()`都是得到字符串的有效长度, 两者没有区别.
 ```cpp
 int main()
@@ -175,7 +179,10 @@ size_type length() const { return size(); }
 
 ***
 ### capacity()
-`capacity()` 得到当前 `string` 对象的容量大小, 和当前对象的有效字符长度没有必然联系, 取决于编译器底层扩容机制
+```cpp
+size_t capacity() const;
+```
+`capacity()` 得到当前 `string` 对象的**可存放有效字符的**容量值, `capacity >= size`, 如何扩容取决于编译器底层扩容机制
 
 下面写一个程序用来测试 `g++(Linux)` 的扩容机制
 ```cpp
@@ -201,7 +208,119 @@ int main()
 发现在<font color=green>Linux下 g++编译器</font>的扩容机制是这样的: **第一次直接开 15 个字符的空间, 之后每次扩容为当前容量的两倍.**
 ![Alt text](image/string%E7%B1%BB/image-7.png)
 
+### max_size()
+```cpp
+size_t max_size() const;
+```
+`max_size()` 可以返回字符串的最大长度
 
+```cpp
+int main()
+{
+  string s1;
+  cout << s1.max_size() << endl;
+  
+  return 0;
+}
+```
+程序运行结果如下:  ![Alt text](image/string%E7%B1%BB/image-19.png), 转换为 16进制: `0x3FFFFFFFFFFFFFFF`, 结果是 `int` 类型可取最大正整数 `2^63-1` 的一半.
+
+`max_size()` 所返回的数不能保证真的能创建一个这么大容量的 `string` 类对象, 程序很有很有可能报异常.
+
+![Alt text](image/string%E7%B1%BB/image-20.png)
+
+`max_size()` 的主要作用就是通过得到的返回值可以得到**系统或者库中实现的限制**, 提醒不能超过这么大的容量, 实践中参考和使用价值并不大.
+
+### reserve()
+```cpp
+void reserve(size_t n = 0);
+```
+`reserve()` 可以申请为 `string` 类扩容, 使得扩容后的 `capacity` 可以存放**输入参数**长度的字符串. 不一定就会扩容**输入参数**, `capacity` >= `n` 即可(例如输入500, 不一定会只开500)
+
+- 如果 `n > capacity`, 编译器会将 `capacity` 扩容至 `n`(可能大于`n`)
+
+```cpp
+int main()
+{
+  string s1("Hello,world");
+  cout << "size: " << s1.size() << endl;
+  cout << "begin: " << s1.capacity() << endl;
+
+  // n > size
+  s1.reserve(300);
+  cout << "n > size: " << s1.capacity() << endl;
+
+  return 0;
+}
+```
+程序运行如下: 在 Linux g++ 下, `s1` 的 `capacity` 被扩容至了 `n`
+![Alt text](image/string%E7%B1%BB/image-21.png)
+
+- 如果 `n < capacity`, `capacity` 不会被改变
+```cpp
+int main()
+{
+  string s1("Hello,world");
+  cout << "size: " << s1.size() << endl;
+  cout << "begin: " << s1.capacity() << endl;
+
+  s1.reserve(13);
+  cout << "s1.reserve(13): " << s1.capacity() << endl;
+
+  s1.reserve(1);
+  cout << "s1.reserve(1): " << s1.capacity() << endl;
+
+  return 0;
+}
+```
+程序运行结果如下: `n` < `capacity` 时, 无论 `n` 是比 `size` 大还是小, 都不会对 `capacity` 进行改变
+![Alt text](image/string%E7%B1%BB/image-22.png)
+
+<font size=4 color=red>总结:</font>`reserve` 只提供扩容功能, 不会对原本的数据进行修改.
+
+### resize()
+```cpp
+void resize(size_t n);
+void resize(size_t n, char c);
+```
+`resize()` 会修改 `string` 类对象的 `size` 为 `n`
+- 如果 `n > capacity`, 将 `capacity` 扩容至少到 `n`, 同时插入字符(默认是`'\0'`)至 `size` 为 `n`
+- 如果 `n <= capacity && n >= size` , 直接尾插字符, 容量不变
+- 如果 `n < size`, 将 `n` 位置字符替换为 `0`, 容量不变
+
+- `n > capacity`
+```cpp
+int main()
+{
+  string s1 = "1234567890";
+  cout << "begin\nsize: " << s1.size() << "\ncapacity: " << s1.capacity() << endl << endl;
+
+  // n > capacity
+  s1.resize(40);
+  cout << "after s1.resize(40)\nsize: " << s1.size() << "\ncapacity: " << s1.capacity() << endl;
+}
+```
+程序运行结果:
+<font color=red>注意: 只有字符串中最后一个`'\0'`会被认为是结尾标识符, 前面的`'\0'`都是有效字符</font>
+![Alt text](image/string%E7%B1%BB/image-23.png)
+
+- `n <= capacity && n >= size`
+```cpp
+s1.resize(13);
+cout << "after s1.resize(13)\nsize: " << s1.size() << "\ncapacity: " << s1.capacity() << endl;
+```
+程序运行结果:  
+![Alt text](image/string%E7%B1%BB/image-24.png)
+
+- `n < size`
+```cpp
+s1.resize(5);
+cout << "after s1.resize(5)\nsize: " << s1.size() << "\ncapacity: " << s1.capacity() << endl;
+```
+程序运行结果为:  
+![Alt text](image/string%E7%B1%BB/image-25.png)
+
+<font color=red>`resize()` 常用作在知道需要开很大空间的前提下, 提前开空间进行初始化, 避免重复扩容, 扩容消耗很大.</font>
 ## 3. string 类对象的访问及遍历操作
 
 函数名称|功能说明
@@ -332,7 +451,7 @@ int main()
 如果容器对象是 `const` 对象, 也有对应的 `const_iterator`. 
 <font color=red>不同于 `const iterator` </font>, `const_iterator` 限制的是不可以通过对指向容器的元素进行修改, 而 `const iterator` 则是限定了 `it` 不可以修改, 这显然是不对的.
 
-同样的, `begin` 和 `end`, `rbegin` 和 `rend` 也重载了 `const` 修饰的成员函数
+同样的, `begin` 和 `end`, `rbegin` 和 `rend` 也重载了 `const` 修饰的成员函数  
 ![Alt text](image/string%E7%B1%BB/image-16.png)
 
 如果不想让迭代器对原数据进行修改, 可以这样定义 `it`
