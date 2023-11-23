@@ -1,6 +1,8 @@
 #include "string.h"
 
-using std::cin, std::cout, std::endl;
+using std::cin;
+using std::cout;
+using std::endl;
 using namespace wr;
 
 void Test1()
@@ -17,15 +19,136 @@ void Test1()
   cout << s4 << endl;
   cout << s5 << endl;
 
-  for (auto &e: s2){
+  for (auto &e : s2)
+  {
     ++e;
   }
   cout << s2 << endl;
 }
 
+void Test2()
+{
+  string s1 = "abcdef";
+  cout << s1.capacity() << endl;
+  cout << s1.size() << endl;
+  cout << s1.empty() << endl;
+
+  // 	s1.reserve(30);
+  // 	cout << s1.capacity() << endl;
+  // 	s1.reserve(20);
+  // 	cout << s1.capacity() << endl;
+  //
+  s1.push_back('a');
+  cout << s1.capacity() << endl;
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  cout << s1.capacity() << endl;
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  s1.push_back('a');
+  cout << s1.capacity() << endl;
+}
+
+void Test3()
+{
+  string s1 = "abcdef";
+  cout << s1.capacity() << endl;
+  cout << s1.size() << endl;
+
+  s1.resize(2);
+  cout << s1 << endl;
+  cout << s1.capacity() << endl;
+  cout << s1.size() << endl;
+
+  s1.resize(10, 'c');
+  cout << s1 << endl;
+  cout << s1.capacity() << endl;
+  cout << s1.size() << endl;
+
+  //	s1.resize(20);
+  //	cout << s1 << endl;
+  //	cout << s1.capacity() << endl;
+  //	cout << s1.size() << endl;
+
+  s1.resize(30, 'b');
+  cout << s1 << endl;
+  cout << s1.capacity() << endl;
+  cout << s1.size() << endl;
+}
+
+void Test4()
+{
+  string s1 = "abcdef";
+
+  for (int i = 0; i < s1.size(); ++i)
+  {
+    cout << s1[i];
+  }
+  cout << endl;
+
+  s1 += 'b';
+  cout << s1 << endl;
+  cout << s1.size() << endl;
+  cout << s1.capacity() << endl;
+
+  s1.append("aaaaaa");
+  cout << s1 << endl;
+  cout << s1.size() << endl;
+  cout << s1.capacity() << endl;
+
+  s1 += "cccccc";
+  cout << s1 << endl;
+  cout << s1.size() << endl;
+  cout << s1.capacity() << endl;
+
+  string s2 = "a";
+  s1.swap(s2);
+  cout << "s1: " << s1 << endl;
+  cout << "s2: " << s2 << endl;
+
+  cout << s1.c_str() << endl;
+  cout << s2.c_str() << endl;
+
+}
+
+void Test5()
+{
+  string s1 = "aaaab";
+  string s2 = "aaaac";
+
+  cout << (s1 < s2) << endl;
+
+  string s3 = s2;
+  cout << (s3 == s2) << endl;
+  cout << (s3 == s1) << endl;
+
+  cout << s1.find('b', 0) << endl;
+  cout << s1.find("aab") << endl;
+  cout << s1.find("ab") << endl;
+  cout << s1.find("aac") << endl;
+
+  s1.insert(0, 'c');
+  cout << s1 << endl;
+  s1.insert(4, 'c');
+  cout << s1 << endl;
+}
 int main()
 {
-  Test1();
+  // Test1();
+  // Test2();
+  // Test3();
+  Test4();
+  // Test5();
 
   return 0;
 }
