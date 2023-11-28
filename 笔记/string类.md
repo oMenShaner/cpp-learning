@@ -140,7 +140,7 @@ string s1 = "Hello string";
 [reserve](https://legacy.cplusplus.com/reference/string/string/reserve/)|为字符串预留空间
 [resize](https://legacy.cplusplus.com/reference/string/string/resize/)|将有效字符的个数改成n个, 多出的空间用字符c填充
 
-### size() 和 length()
+### size 和 length
 ```cpp
 size_t size() const;
 size_t length() const;
@@ -178,7 +178,7 @@ size_type length() const { return size(); }
 ```
 
 ***
-### capacity()
+### capacity
 ```cpp
 size_t capacity() const;
 ```
@@ -208,7 +208,7 @@ int main()
 发现在<font color=green>Linux下 g++编译器</font>的扩容机制是这样的: **第一次直接开 15 个字符的空间, 之后每次扩容为当前容量的两倍.**
 ![Alt text](image/string%E7%B1%BB/image-7.png)
 
-### max_size()
+### max_size
 ```cpp
 size_t max_size() const;
 ```
@@ -231,7 +231,7 @@ int main()
 
 `max_size()` 的主要作用就是通过得到的返回值可以得到**系统或者库中实现的限制**, 提醒不能超过这么大的容量, 实践中参考和使用价值并不大.
 
-### reserve()
+### reserve
 ```cpp
 void reserve(size_t n = 0);
 ```
@@ -278,7 +278,7 @@ int main()
 
 <font size=4 color=red>总结:</font>`reserve` 只提供扩容功能, 不会对原本的数据进行修改.
 
-### resize()
+### resize
 ```cpp
 void resize(size_t n);
 void resize(size_t n, char c);
@@ -496,3 +496,153 @@ int main()
 ```
 程序运行结果为:  ![Alt text](image/string%E7%B1%BB/image-18.png)
 
+## 4. string类的修改操作
+函数名称|功能说明
+---|---
+[push_back](http://www.cplusplus.com/reference/string/string/push_back/)|在字符串后尾插字符c
+[append](http://www.cplusplus.com/reference/string/string/append/)|在字符串后追加一个字符串
+[operator+=](http://www.cplusplus.com/reference/string/string/operator+=/)|在字符串后追加字符串str
+
+### push_back
+```cpp
+void push_back(char c);
+```
+只能尾插**一个字符**, 不可以尾插字符串.
+
+```cpp
+int main()
+{
+  string s = "abcde";
+  s.push_back('f');
+  cout << s << endl;
+
+  return 0;
+}
+```
+![Alt text](image/string%E7%B1%BB/image-26.png)
+
+### append
+![Alt text](image/string%E7%B1%BB/image-27.png)
+
+`append()` 就可以尾插一个字符串, 也可以尾插一个 `string` 类对象
+
+```cpp
+int main()
+{
+  string s = "abcde";
+  s.append("fg"); // 尾插c格式串
+  cout << s << endl;
+
+  string s1 = "hijklm";
+  s.append(s1); // 尾插string类对象
+  cout << s << endl;
+
+  return 0;
+}
+```
+程序运行结果如下:  ![Alt text](image/string%E7%B1%BB/image-28.png)
+
+<font color=red>注意:</font>插入字符需要指定数量, 只写插入的字符.
+
+```cpp
+int main()
+{
+  string s = "abcdef";
+  s.append(1, 'g');
+  cout << s << endl;
+  
+  return 0;
+}
+```
+程序运行结果如下:  ![Alt text](image/string%E7%B1%BB/image-29.png)
+
+### operator+=
+![Alt text](image/string%E7%B1%BB/image-30.png)
+
+一般更加常用的是 `operator+=`, 既可以尾插字符,也可以尾插字符串
+
+```cpp
+int main()
+{
+  string s = "12345";
+  s += '6';             // 尾插字符
+  s += "789";           // 尾插字符串
+  s += string("0000");  // 尾插string类对象
+
+  cout << s << endl;
+  return 0;
+}
+```
+程序运行结果:  ![Alt text](image/string%E7%B1%BB/image-31.png)
+
+
+
+## 5.string 类对象的操作
+函数名称|功能说明
+---|---
+[c_str](http://www.cplusplus.com/reference/string/string/c_str/)|返回c格式字符串
+[find](http://www.cplusplus.com/reference/string/string/find/)+[npos](http://www.cplusplus.com/reference/string/string/npos/)|从字符串pos位置开始往后找字符c, 返回该字符在字符串中的位置
+[rfind](http://www.cplusplus.com/reference/string/string/rfind/)|从字符串pos位置开始往前找字符c, 返回该字符在字符串中的位置
+[substr](http://www.cplusplus.com/reference/string/string/substr/)|在str中从pos位置开始, 截取n个字符, 然后将其返回
+
+
+### c_str
+```cpp
+const char *c_str() const;
+```
+返回一个指向 `string` 类对象的 c格式字符串(以`'\0'`为结尾) 成员的`const` 指针
+
+在一些只有C格式字符串接口的操作中, 该函数的作用就体现了.
+例如一些嵌入式程序, 以及下面的文件读写操作.
+
+如果想用 C语言 的文件操作相关函数, 必须要传 C格式字符串 才可以找到该文件(即 `const char *`)
+
+```cpp
+string file("file.txt");
+FILE *fp = fopen(file.c_str(), "r");
+```
+
+### find 和 substr
+如果要取文件名的后缀, 使用 `find()` 就可以很快的找到 `.` 的位置
+![Alt text](image/string%E7%B1%BB/image-32.png)
+`find()` 可以从 `pos` 位置开始找要查找的目标, 如果找到返回首元素下标, 如果没找到返回 `string::npos`
+
+同时结合 `sbustr()` 可以截取指定长度的字符串, 第二个参数缺省值为 `npos`
+![Alt text](image/string%E7%B1%BB/image-33.png)
+
+```cpp
+int main()
+{
+  string file = "hello.c";
+  size_t pos = file.find('.', 0); // 找到 . 的位置
+
+  if (pos != string::npos){
+    cout << file.substr(pos) << endl; // 截取 . 位置之后的字符串
+  }
+
+  return 0;
+}
+```
+程序运行结果如下:  ![Alt text](image/string%E7%B1%BB/image-34.png)
+
+通过分离网址, 再熟悉一下 `find()` 和 `substr()` 的操作
+
+```cpp
+int main()
+{
+  string str("https://legacy.cplusplus.com/reference/string/string/substr/");
+
+  size_t pos1 = str.find(':');
+  cout << str.substr(0, pos1 - 0) << endl;
+
+  size_t pos2 = str.find('/', pos1 + 3);
+  cout << str.substr(pos1 + 3, pos2 - pos1 - 3) << endl;
+
+  cout << str.substr(pos2 + 1) << endl;
+
+  return 0;
+}
+```
+程序运行结果如下:  ![Alt text](image/string%E7%B1%BB/image-35.png)
+
+本章完.
