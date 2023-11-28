@@ -18,7 +18,8 @@ namespace wr
     friend istream &operator>>(istream &_cin, const wr::string &s);
 
   public:
-    typedef char *iterator;
+    typedef char* iterator;
+    typedef const char *const_iterator;
 
   public:
     string(const char *str = "")
@@ -31,12 +32,26 @@ namespace wr
 
     string(const string &s)
     {
-
+      _str = new char[s._capacity + 1];
+      strcpy(_str, s._str);
+      _capacity = s._capacity;
+      _size = s._size;
     }
 
     string &operator=(const string &s)
     {
-    
+      if (this != &s)
+      {
+        delete[] (_str);
+        char *tmp = new char[s._capacity + 1];
+        strcpy(tmp, s._str);
+
+        _capacity = s._capacity;
+        _size = s._size;
+        _str = tmp;
+      }
+
+      return *this;
     }
 
     ~string()
@@ -57,6 +72,16 @@ namespace wr
       return _str + _size;
     }
 
+    const_iterator begin() const
+    {
+      return _str;
+    }
+
+    const_iterator end() const
+    {
+      return _str + _size;
+    }
+
     // modify
     void push_back(char c)
     {
@@ -70,15 +95,18 @@ namespace wr
       *(_str + _size) = '\0';
     }
 
-    string &operator+=(const char c){
+    string &operator+=(const char c)
+    {
       this->push_back(c);
 
       return *this;
     }
 
-    void append(const char *str){
+    void append(const char *str)
+    {
       int len = strlen(str);
-      if (_size + len > _capacity){
+      if (_size + len > _capacity)
+      {
         size_t newCapacity = _size + len;
         this->reserve(newCapacity);
       }
@@ -87,17 +115,22 @@ namespace wr
       _size += len;
     }
 
-    string &operator+=(const char *str){
+    string &operator+=(const char *str)
+    {
       this->append(str);
 
       return *this;
     }
 
-    void swap(string &s){
-
+    void swap(string &s)
+    {
+      std::swap(_str, s._str);
+      std::swap(_capacity, s._capacity);
+      std::swap(_size, s._size);
     }
 
-    const char *c_str() const {
+    const char *c_str() const
+    {
       return _str;
     }
 
@@ -125,7 +158,7 @@ namespace wr
       {
         char *tmp = new char[n + 1];
         strcpy(tmp, _str);
-        delete[](_str);
+        delete[] (_str);
         _str = tmp;
         _capacity = n;
       }
@@ -173,16 +206,20 @@ namespace wr
     }
 
     // relational operators
-    bool operator<(const string &s){
+    bool operator<(const string &s)
+    {
       int len1 = this->size();
       int len2 = s.size();
 
-      if (len1 != len2){
+      if (len1 != len2)
+      {
         return len1 < len2;
       }
 
-      for (int i = 0; i < len1; ++i){
-        if (this->_str[i] >= s._str[i]){
+      for (int i = 0; i < len1; ++i)
+      {
+        if (this->_str[i] >= s._str[i])
+        {
           return false;
         }
       }
@@ -190,92 +227,167 @@ namespace wr
       return true;
     }
 
-    bool operator==(const string &s){
+    bool operator==(const string &s)
+    {
       int len1 = this->size();
       int len2 = s.size();
 
-      if (len1 != len2){
+      if (len1 != len2)
+      {
         return false;
       }
 
-      for (int i = 0; i < len1; ++i){
-        if (this->_str[i] != s._str[i]){
+      for (int i = 0; i < len1; ++i)
+      {
+        if (this->_str[i] != s._str[i])
+        {
           return false;
         }
       }
-      
+
       return true;
     }
-  
-    bool operator<=(const string &s){
+
+    bool operator<=(const string &s)
+    {
       return *this < s && *this == s;
     }
 
-    bool operator>(const string &s){
+    bool operator>(const string &s)
+    {
       return !(*this <= s);
     }
 
-    bool operator>=(const string &s){
+    bool operator>=(const string &s)
+    {
       return *this > s && *this == s;
     }
 
-    bool operator!=(const string &s){
+    bool operator!=(const string &s)
+    {
       return !(*this == s);
     }
 
     // 返回 c 在 string 第一次出现的位置
-    size_t find(char c, size_t pos = 0){
-      assert(pos >= 0 && pos < this->size());
+    size_t find(char c, size_t pos = 0)
+    {
+      assert(pos < _size);
 
-      for (int i = pos; i < this->size(); ++i)
+      for (int i = pos; i < _size; ++i)
       {
-        if (this->_str[i] == c){
+        if (this->_str[i] == c)
+        {
           return i;
         }
       }
 
-      return -1;
+      return npos;
     }
 
     // 返回子串 s 在string 第一次出现的位置
-    size_t find(const char *s, size_t pos = 0){
-      assert(pos >= 0 && pos < this->size());
+    size_t find(const char *str, size_t pos = 0)
+    {
+      assert(pos < _size);
 
-      for (int i = pos; i < this->size(); ++i){
-        if (this->_str[i] == s[0]){
-          for (int j = 1; j < strlen(s); ++j){
-            if (this->_str[i+j] != s[j]){
-              break;
-            }
-
-            if (j == strlen(s) - 1){
-              return i;
-            }
-          }
-        }
+      const char *ptr = strstr(_str + pos, str);
+      if (ptr == nullptr)
+      {
+        return npos;
       }
-
-      return -1;
+      else
+      {
+        return ptr - _str;
+      }
     }
 
     // 在 pos 位置插入字符 c /字符串 str, 并返回该字符的位置
-    string &insert(size_t pos, char c){
-      assert(pos >= 0 && pos <= this->size());
+    string &insert(size_t pos, char c)
+    {
+      assert(pos <= _size);
 
-      this->push_back('\0');
-      for (int i = this->size()-1; i > pos; --i){
-        this->_str[i + 1] = this->_str[i];
+      if (_size == _capacity)
+      {
+        size_t newCapacity = _capacity == 0 ? 4 : _capacity * 2;
+        this->reserve(newCapacity);
       }
-      this->_str[pos] = c;
+
+      size_t end = _size + 1;
+      while (end > pos)
+      {
+        _str[end] = _str[end - 1];
+        --end;
+      }
+      _str[end] = c;
+      ++_size;
 
       return *this;
+    }
+
+    string &insert(size_t pos, const char *str)
+    {
+      assert(pos <= _size);
+
+      size_t len = strlen(str);
+      if (_size + len > _capacity)
+      {
+        this->reserve(_capacity + len);
+      }
+
+      size_t end = _size + len;
+      while (end > pos)
+      {
+        _str[end] = _str[end - len];
+        --end;
+      }
+      strncpy(_str + pos, str, len);
+      _size += len;
+
+      return *this;
+    }
+
+    string &erase(size_t pos, size_t len = npos)
+    {
+      assert(pos < _size);
+
+      if (len == npos || pos + len >= _size)
+      {
+        _str[pos] = '\0';
+        _size = pos;
+      }
+      else 
+      {
+        strcpy(_str + pos, _str + pos + len);
+        _size -= len;
+      }
+
+      return *this;
+    }
+
+    string substr(size_t pos = 0, size_t len = npos)
+    {
+      assert(pos < _size);
+
+      size_t end = pos + len;
+      if (len == npos || pos + len >= _size)
+      {
+        end = _size;
+      }
+
+      string str;
+      str.reserve(end - pos);
+      for (int i = pos; i < end; ++i)
+      {
+        str += _str[i];
+      }
+
+      return str;
     }
 
   private:
     char *_str;
     size_t _capacity;
-    size_t _size
-
+    size_t _size;
+    const static size_t npos = -1;
   };
 
   ostream &operator<<(ostream &_cout, const wr::string &s)

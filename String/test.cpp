@@ -15,6 +15,7 @@ void Test1()
   string s4 = s2;
   string s5 = "hello";
 
+  s4 = s3;
   cout << s3 << endl;
   cout << s4 << endl;
   cout << s5 << endl;
@@ -88,7 +89,7 @@ void Test3()
 
 void Test4()
 {
-  string s1 = "abcdef";
+  string s1("abcdef");
 
   for (int i = 0; i < s1.size(); ++i)
   {
@@ -137,18 +138,37 @@ void Test5()
   cout << s1.find("ab") << endl;
   cout << s1.find("aac") << endl;
 
-  s1.insert(0, 'c');
-  cout << s1 << endl;
-  s1.insert(4, 'c');
-  cout << s1 << endl;
 }
+
+void Test6()
+{
+  string s1 = "123456";
+  s1.insert(0, 'a');
+  cout << s1 << endl;
+
+  s1.insert(0, "cdef");
+  cout << s1 << endl;
+
+  s1.erase(6);
+  cout << s1 << endl;
+
+  s1.erase(2, 3);
+  cout << s1 << endl;
+
+  string s2 = "123456789";
+  cout << s1.substr() << endl;
+  cout << s2.substr(3, 10) << endl;
+  cout << s2.substr(2, 4) << endl;
+}
+
 int main()
 {
   // Test1();
   // Test2();
   // Test3();
-  Test4();
+  // Test4();
   // Test5();
+  Test6();
 
   return 0;
 }
