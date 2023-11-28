@@ -1,8 +1,12 @@
-#include "string.h"
-
+#include <iostream>
 using std::cin;
 using std::cout;
 using std::endl;
+using std::istream;
+using std::ostream;
+
+#include "String.h"
+
 using namespace wr;
 
 void Test1()

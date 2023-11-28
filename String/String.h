@@ -1,14 +1,8 @@
 #ifndef __STRING_H__
 #define __STRING_H__
-#include <iostream>
 #include <assert.h>
 #include <string.h>
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::istream;
-using std::ostream;
 
 namespace wr
 {
