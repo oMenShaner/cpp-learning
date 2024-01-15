@@ -165,6 +165,20 @@ void Test6()
   cout << s2.substr(2, 4) << endl;
 }
 
+void Test7()
+{
+  string s = "";
+  cout << s << endl;
+
+  cin >> s;
+  cout << s << endl;
+
+  cin >> s;
+  cout << s << endl;
+
+  cin >> s;
+  cout << s << endl;
+}
 int main()
 {
   // Test1();
@@ -172,7 +186,8 @@ int main()
   // Test3();
   // Test4();
   // Test5();
-  Test6();
-
+  //Test6();
+  Test7();
+  
   return 0;
 }

@@ -2,15 +2,12 @@
 #define __STRING_H__
 #include <assert.h>
 #include <string.h>
-
+  
 
 namespace wr
 {
   class string
   {
-    friend ostream &operator<<(ostream &_cout, const wr::string &s);
-    friend istream &operator>>(istream &_cin, const wr::string &s);
-
   public:
     typedef char* iterator;
     typedef const char *const_iterator;
@@ -26,24 +23,32 @@ namespace wr
 
     string(const string &s)
     {
-      _str = new char[s._capacity + 1];
-      strcpy(_str, s._str);
-      _capacity = s._capacity;
-      _size = s._size;
+      // _str = new char[s._capacity + 1];
+      // strcpy(_str, s._str);
+      // _capacity = s._capacity;
+      // _size = s._size;
+
+      // 现代写法，直接构造tmp，调用swap
+      string tmp(s._str);
+      swap(tmp);
+
     }
 
-    string &operator=(const string &s)
+    string &operator=(string &s)
     {
-      if (this != &s)
-      {
-        delete[] (_str);
-        char *tmp = new char[s._capacity + 1];
-        strcpy(tmp, s._str);
+      // if (this != &s)
+      // {
+      //   delete[] (_str);
+      //   char *tmp = new char[s._capacity + 1];
+      //   strcpy(tmp, s._str);
 
-        _capacity = s._capacity;
-        _size = s._size;
-        _str = tmp;
-      }
+      //   _capacity = s._capacity;
+      //   _size = s._size;
+      //   _str = tmp;
+      // }
+
+      // 现代写法，直接调用swap
+      swap(s);
 
       return *this;
     }
@@ -126,6 +131,12 @@ namespace wr
     const char *c_str() const
     {
       return _str;
+    }
+
+    void clear()
+    {
+      _str[0] = '\0';
+      _size = 0;
     }
 
     // capacity
@@ -384,17 +395,40 @@ namespace wr
     const static size_t npos = -1;
   };
 
+  // 不一定非要友元，只有访问到私有成员才需要
   ostream &operator<<(ostream &_cout, const wr::string &s)
   {
-    _cout << s._str;
+    for (size_t i = 0; i < s.size(); ++i)
+    {
+      _cout << s[i];
+    }
 
-    return _cout;
+      return _cout;
   }
 
-  istream &operator>>(istream &_cin, const wr::string &s)
+  istream &operator>>(istream &_cin, wr::string &s)
   {
-    _cin >> s._str;
+    s.clear();
+    char buffer[128] = {0, }; // 给一个buffer数组，临时存放输入的内容
+    char ch = _cin.get(); // get()可以拿到空格或换行
+    int i = 0;
+    while (ch != ' ' && ch != '\n')
+    {
+      buffer[i++] = ch;
+      if (i == 127)
+      {
+        buffer[i] = '\0';
+        s += buffer;
+        i = 0;
+      }
+      ch = _cin.get();
+    }
 
+    if (i > 0)
+    {
+      buffer[i] = '\0';
+      s += buffer;
+    }
     return _cin;
   }
 };
