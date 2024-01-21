@@ -124,10 +124,54 @@ void Test4()
   SHOW(v5);
 }
 
+void Test5()
+{
+  vector<string> vstr;
+  vstr.push_back("1111");
+  vstr.push_back("1111");
+  vstr.push_back("1111");
+  vstr.push_back("1111");
+  vstr.push_back("1111");
+
+  SHOW(vstr);
+}
+
+void Test6()
+{
+  vector<int> v;
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(2);
+  v.push_back(3);
+  v.push_back(5);
+  v.push_back(6);
+  v.push_back(8);
+  v.push_back(10);
+  v.push_back(11);
+
+  vector<int>::iterator it = v.begin();
+  while (it != v.end())
+  {
+    if (*it % 2 == 0)
+    {
+      it = v.erase(it);
+    }
+    else
+    {
+      ++it;
+    }
+  }
+
+  SHOW(v);
+}
 int main()
 {
   //Test1();
   //Test2();
   //Test3();
-  Test4();
+  //Test4();
+  //Test5();
+  Test6();
+
+  return 0;
 }

@@ -78,7 +78,12 @@ namespace wr
       {
         size_t old_size = size();
         iterator tmp = new T[n]; 
-        memcpy(tmp, _start, sizeof(T) * old_size);
+        // memcpy(tmp, _start, sizeof(T) * old_size);
+        // memcpy 只是浅拷贝，由于已经申请并且初始化该空间，需要另外进行赋值
+        for (size_t i = 0; i < old_size; ++i)
+        {
+          tmp[i] = _start[i];
+        }
 
         _start = tmp;
         _finish = _start + old_size;
@@ -152,9 +157,15 @@ namespace wr
       
       // 更新pos，移动数据后插入数据
       pos = _start + old_pos;
-      memmove(pos + 1, pos, sizeof(T) * (_finish - pos));
-      *pos= x;
+      // memmove(pos + 1, pos, sizeof(T) * (_finish - pos));
+      iterator end = _finish;
+      while (end >= pos)
+      {
+        *(end + 1) = *end;
+        --end;
+      }
       ++_finish;
+      *pos = x;
 
       return pos;
     }
@@ -163,7 +174,13 @@ namespace wr
       assert(pos >= _start);
       assert(pos < _finish);
 
-      memmove(pos, pos + 1, sizeof(T) * (_finish - pos - 1));
+      //memmove(pos, pos + 1, sizeof(T) * (_finish - pos - 1));
+      iterator it = pos + 1;
+      while (it < _finish)
+      {
+        *(it - 1) = *it;
+        ++it;
+      }
       --_finish;
 
       return pos;
