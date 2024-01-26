@@ -1,8 +1,11 @@
-#include "vector.h"
+//#include "vector.h"
+#include <vector>
+#include <string>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
-using namespace wr;
+//using namespace wr;
 
 #define SHOW(v)                                                         \
   cout << "capacity: " << v.capacity() << " size: " << v.size() << endl; \
@@ -126,12 +129,20 @@ void Test4()
 
 void Test5()
 {
+  vector<int> vi;
+  vi.push_back(1);
+  vi.push_back(1);
+  vi.push_back(1);
+  vi.push_back(1);
+  vi.push_back(1);
+  SHOW(vi);
+
   vector<string> vstr;
   vstr.push_back("1111");
-  vstr.push_back("1111");
-  vstr.push_back("1111");
-  vstr.push_back("1111");
-  vstr.push_back("1111");
+  vstr.push_back("2222");
+  vstr.push_back("3333");
+  vstr.push_back("4444");
+  vstr.push_back("5555");
 
   SHOW(vstr);
 }
@@ -164,6 +175,62 @@ void Test6()
 
   SHOW(v);
 }
+
+void Test7()
+{
+  int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  vector<int> v(a, a + 10); // 用 int数组 构造 vector<int>对象
+
+  vector<int>::iterator ret = find(v.begin(), v.end(), 11); // 使用通用find()方法进行查找
+
+  if (ret != v.end())
+  {
+    cout << "找到了" << endl;
+  }
+  else
+  {
+    cout << "没找到" << endl;
+  }
+}
+
+void Test8()
+{
+  vector<int> v{1, 2, 3, 4, 5, 6};
+  auto it = v.begin();
+  v.reserve(100);
+  it = v.begin(); // 更新
+  while (it != v.end())
+  {
+    cout << *it << " ";
+    ++it;
+  }
+  cout << endl;
+}
+
+void Test9()
+{
+  int a[] = {1, 2, 2, 4, 5, 6, 6, 8, 9};
+  vector<int> v(a, a + sizeof(a) / sizeof(int));
+
+  vector<int>::iterator it = v.begin();
+  while (it != v.end())
+  {
+    if (*it % 2 == 0)
+    {
+      it = v.erase(it);
+    }
+    else
+    {
+      ++it;
+    }
+  }
+
+  for (auto e: v)
+  {
+    cout << e << " ";
+  }
+  cout << endl;
+}
 int main()
 {
   //Test1();
@@ -171,7 +238,10 @@ int main()
   //Test3();
   //Test4();
   //Test5();
-  Test6();
+  //Test6();
+  //Test7();
+  //Test8();
+  Test9();
 
   return 0;
 }

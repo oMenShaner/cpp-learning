@@ -80,9 +80,12 @@ namespace wr
         iterator tmp = new T[n]; 
         // memcpy(tmp, _start, sizeof(T) * old_size);
         // memcpy 只是浅拷贝，由于已经申请并且初始化该空间，需要另外进行赋值
-        for (size_t i = 0; i < old_size; ++i)
-        {
-          tmp[i] = _start[i];
+        if(_start) {
+          for (size_t i = 0; i < old_size; ++i)
+          {
+            tmp[i] = _start[i];
+          }
+          delete[] (_start);
         }
 
         _start = tmp;
