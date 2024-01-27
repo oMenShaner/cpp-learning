@@ -99,7 +99,29 @@ namespace wr
         push_back(val);
       }
     }
-
+    template<typename InputIterator>
+    list(InputIterator first, InputIterator last)
+    {
+      empty_init();
+      while (first != last)
+      {
+        push_back(*first);
+        ++first;
+      }
+    }
+    list(const list<T> & l)
+    {
+      empty_init();
+      for (const auto &e : l)
+      {
+        push_back(e);
+      }
+    }
+    list<T>& operator=(const list<T> l)
+    {
+      swap(l);
+      return *this;
+    }
     ~list()
     {
       clear();
@@ -131,7 +153,7 @@ namespace wr
     size_t size() const
     {
       size_t size = 0;
-      iterator it = begin();
+      const_iterator it = begin();
       while (it != end())
       {
         ++size;
@@ -141,7 +163,7 @@ namespace wr
     }
     bool empty() const
     {
-      return size();
+      return !size();
     }
 
     ////////////////////////////////////////////////////////////

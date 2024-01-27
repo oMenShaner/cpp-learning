@@ -95,12 +95,31 @@ void Test4()
   cout << l.empty() << endl;
   cout << l.size() << endl;
 }
+
+void Test5()
+{
+  char a[] = "abcdeftg";
+  list<char> l1(a, a + sizeof(a) / sizeof(char));
+  SHOW(l1);
+  cout << l1.size() << endl;
+
+  list<char> l2(l1);
+  SHOW(l2);
+
+  list<char> l3;
+  l3.push_back('1');
+  l2.swap(l3);
+  SHOW(l2);
+  SHOW(l3);
+}
+
 int main()
 {
   //Test1();
   //Test2();
   //Test3();
-  Test4();
+  //Test4();
+  Test5();
 
   return 0;
 }
