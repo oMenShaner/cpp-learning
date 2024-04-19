@@ -1,7 +1,6 @@
-#ifndef __STACK_H__
-#define __STACK_H__
-
+#pragma once
 #include <deque>
+
 namespace wr
 {
   template <class T, class Con = deque<T>>
@@ -23,17 +22,17 @@ namespace wr
       return _con.back();
     }
 
-    const T &top() const
+    T &top() const
     {
       return _con.back();
     }
 
-    size_t size() const
+    size_t size()
     {
       return _con.size();
     }
 
-    bool empty() const
+    bool empty()
     {
       return _con.empty();
     }
@@ -42,4 +41,3 @@ namespace wr
     Con _con;
   };
 }
-#endif

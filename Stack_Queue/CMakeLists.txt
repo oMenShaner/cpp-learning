@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_C_COMPILER /opt/rh/devtoolset-11/root/usr/bin/gcc)
 set(CMAKE_CXX_COMPILER /opt/rh/devtoolset-11/root/usr/bin/g++)
