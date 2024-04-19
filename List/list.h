@@ -1,6 +1,7 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 #include <assert.h>
+#include "Reverse_iterator.h"
 
 namespace wr
 {
@@ -77,64 +78,6 @@ namespace wr
     }
   };
 
-  // Reverse_iterator
-  template <class Iterator, class Ref, class Ptr>
-  struct Reverse_iterator
-  {
-    typedef Reverse_iterator<Iterator, Ref, Ptr> Self;
-    Iterator _it;
-    Reverse_iterator(Iterator it)
-        : _it(it)
-    {
-    }
-
-    Self operator++(int)
-    {
-      --_it;
-      return *this;
-    }
-
-    Self operator++()
-    {
-      Self tmp(*this);
-      --_it;
-      return tmp;
-    }
-
-    Self operator--(int)
-    {
-      ++_it;
-      return *this;
-    }
-
-    Self operator--()
-    {
-      Self tmp(*this);
-      ++_it;
-      return tmp;
-    }
-
-    Ref operator*()
-    {
-      return *_it;
-    }
-
-    Ptr operator->()
-    {
-      return &(*_it);
-    }
-
-    bool operator!=(const Self &s)
-    {
-      return _it != s._it;
-    }
-
-    bool operator==(const Self &s)
-    {
-      return _it == s._it;
-    }
-  };
-
   // list
   template <typename T>
   class list
@@ -208,27 +151,22 @@ namespace wr
     {
       return _head;
     }
-
     reverse_iterator rbegin()
     {
-      return reverse_iterator(--end());
+      return reverse_iterator(end());
     }
-
     reverse_iterator rend()
     {
-      return reverse_iterator(--begin());
+      return reverse_iterator(begin());
     }
-
     const_reverse_iterator rbegin() const
     {
-      return const_reverse_iterator(--end());
+      return reverse_iterator(end());
     }
-
     const_reverse_iterator rend() const
     {
-      return const_reverse_iterator(--begin());
+      return reverse_iterator(begin());
     }
-
     ////////////////////////////////////////////////////////////
     // List Capacity
     size_t size() const

@@ -125,6 +125,7 @@ void Test6()
   list<int>::reverse_iterator rlt = l.rbegin();
   while (rlt != l.rend())
   {
+    *rlt += 5;
     cout << *rlt << ' ';
     rlt++;
   }
