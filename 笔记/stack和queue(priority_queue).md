@@ -1,4 +1,4 @@
-# stack和queue(priority_queue)
+# stack 和 queue(priority_queue)
 
 ## 1. 容器适配器
 
@@ -8,27 +8,25 @@
 
 现实中拿插座来说，一个插座可以适配不同的插头，以适应不同电器的电压或者其他要求。
 
-![image-20240420220120184](.\stack和queue(priority_queue).assets\image-20240420220120184.png)
+![image-20240420220120184](<./stack和queue(priority_queue).assets/image-20240420220120184.png>)
 
 `STL`中的适配器相当于一个插座，以适应不同容器，可以"插入"`vector`, 也可以插入 `list`，等等。
 
------
+---
 
 > 虽然`stack`和`queue`也可以存放元素，但在`STL`中并没有将其划分在容器的行列，而是将其称为**容器适配器**。
 
 例如`stack`只提供**LIFO**（先进先出）的概念，对其他容器的接口进行了包装，并没有完全重新创建了一个容器。在`STL`中，`stack`和`queue`默认使用`deque`，而`priority_queue`默认使用`vector`。
 
-![image-20240420221010149](.\stack和queue(priority_queue).assets\image-20240420221010149.png)
+![image-20240420221010149](<./stack和queue(priority_queue).assets/image-20240420221010149.png>)
 
 类似于`list`中`iterator`的实现，实际上是更高一层的封装。`__list_iterator`是对`Node*`的封装，以支持运算符重载；相对应的，`stack`是对其`Container`的封装，以支持**LIFO**的上下文。
-
-
 
 ## 2. stack 的介绍和实现
 
 ### 2.1 stack 的介绍
 
-[stack文档介绍](https://cplusplus.com/reference/stack/stack/?kw=stack)
+[stack 文档介绍](https://cplusplus.com/reference/stack/stack/?kw=stack)
 
 > 1. `stack` 是一种容器适配器，设计用于在具有**后进先出**操作的上下文中，其删除和插入只能从容器的末尾进行操作。
 >
@@ -46,13 +44,13 @@
 >
 > 4. 标准容器`list`,`vector`和`deque`均满足这些要求。**默认情况下**，如果没有为`stack`指定特定的底层容器，默认使用`deque`作为底层容器。
 
-![image-20240420222803451](.\stack和queue(priority_queue).assets\image-20240420222803451.png)
+![image-20240420222803451](<./stack和queue(priority_queue).assets/image-20240420222803451.png>)
 
 ### 2.2 stack 的实现
 
-`stack` 有如下成员函数（不包括C++11)
+`stack` 有如下成员函数（不包括 C++11)
 
-![image-20240420222654994](.\stack和queue(priority_queue).assets\image-20240420222654994.png)
+![image-20240420222654994](<./stack和queue(priority_queue).assets/image-20240420222654994.png>)
 
 利用**适配器**概念进行实现：
 
@@ -62,7 +60,7 @@
 
 namespace wr
 {
-  template <class T, class Con = deque<T>>	
+  template <class T, class Con = deque<T>>
   class stack
   {
   public:
@@ -102,19 +100,19 @@ namespace wr
 }
 ```
 
-可以看到，适配器模式下设计的`stack`十分简洁，相比用C语言实现的`stack`,完全体现了适配器模式的优势。
+可以看到，适配器模式下设计的`stack`十分简洁，相比用 C 语言实现的`stack`,完全体现了适配器模式的优势。
 
-<font color = red>总结</font>：从使用者角度来看，不需要知道`stack`底层使用的是什么容器实现，只需要知道其可以实现对应适合LIFO的操作。无论是`STL`中的容器，还是自定义类容器，只要拥有对应的接口，就可以作为`stack`的底层容器。
+<font color = red>总结</font>：从使用者角度来看，不需要知道`stack`底层使用的是什么容器实现，只需要知道其可以实现对应适合 LIFO 的操作。无论是`STL`中的容器，还是自定义类容器，只要拥有对应的接口，就可以作为`stack`的底层容器。
 
------
+---
 
-## 2. queue的介绍和实现
+## 2. queue 的介绍和实现
 
 ### 2.1 queue 的介绍
 
-[queue文档介绍](https://cplusplus.com/reference/queue/queue/)
+[queue 文档介绍](https://cplusplus.com/reference/queue/queue/)
 
-> 1. `queue` 是一种容器适配器，专门用于在FIFO（先进先出）的上下文中操作，其中从容器一端插入元素，另一端提取元素。
+> 1. `queue` 是一种容器适配器，专门用于在 FIFO（先进先出）的上下文中操作，其中从容器一端插入元素，另一端提取元素。
 >
 > 2. `queue`作为容器适配器实现，用一个底层是特定容器类的封装类来实现，`queue`提供了特定了成员函数来访问它的元素。元素队尾入队列，从队头出队列。
 >
@@ -131,13 +129,13 @@ namespace wr
 >
 > 4. `STL`中`deque`和`list`可以满足这些需求。默认情况下，如果没有容器类被指定，默认使用`deque`作为`queue`的底层容器。
 
-![image-20240420231255575](./stack和queue(priority_queue).assets/image-20240420231255575.png)
+![image-20240420231255575](<./stack和queue(priority_queue).assets/image-20240420231255575.png>)
 
 ### 2.2 queue 的实现
 
 `queue`有如下成员函数：
 
-![image-20240420231447136](./stack和queue(priority_queue).assets/image-20240420231447136.png)
+![image-20240420231447136](<./stack和queue(priority_queue).assets/image-20240420231447136.png>)
 
 实现如下：
 
@@ -194,19 +192,17 @@ namespace wr
 
   private:
     Con _con;
-  };	
+  };
 }
 ```
 
 和`stack`的实现差不多，<font color = red>唯一需要注意的是 </font>：`queue`的底层容器不能是`vector`，因为`vector`类根本不支持`pop_front()`的操作。并且`vector`的头删效率太低，需要挪动后面的所有元素。
 
-
-
 ## 3. priority_queue 的介绍和使用
 
 ### 3.1 priority_queue 的介绍
 
-[priority_queue文档介绍](https://cplusplus.com/reference/queue/priority_queue/)
+[priority_queue 文档介绍](https://cplusplus.com/reference/queue/priority_queue/)
 
 > 1. `priority_queue`（优先队列）是一种容器适配器，根据严格的弱排序标准，它的第一个元素总是它所包含元素最大的。
 >
@@ -232,11 +228,11 @@ namespace wr
 
 需要注意的是，下面是优先级队列的模板参数，第三个参数默认使用`less`仿函数，以构造大堆。若指定`Compare`是`greater`仿函数，则构成小堆。
 
-![image-20240421211205092](./stack和queue(priority_queue).assets/image-20240421211205092.png)
+![image-20240421211205092](<./stack和queue(priority_queue).assets/image-20240421211205092.png>)
 
 ```cpp
 // 默认情况下构造小堆
-priority_queue<int> pq1；		
+priority_queue<int> pq1；
 // 相当于
 priority_queue<int, vector<int>, less<int>> pq1;
 
@@ -246,17 +242,17 @@ priority_queue<int, deque<int>, greater<int>> pq2;
 
 如果需要使用`priority_queue`存放自定义类元素，需要自行重载`>`和`<`。
 
------
+---
 
 ### 3.2 priority_queue 的实现
 
-之前已经用C语言实现过堆，C++实现的重点是对`STL`的使用、仿函数的使用以及适配器模式概念的理解。
+之前已经用 C 语言实现过堆，C++实现的重点是对`STL`的使用、仿函数的使用以及适配器模式概念的理解。
 
-[数据结构:堆的实现和堆排序及TopK问题](https://blog.csdn.net/Kuzuba/article/details/133302058?spm=1001.2014.3001.5501)
+[数据结构:堆的实现和堆排序及 TopK 问题](https://blog.csdn.net/Kuzuba/article/details/133302058?spm=1001.2014.3001.5501)
 
-堆的插入元素和删除元素的时间复杂度是O(logN) ，默认情况下优先级队列是大堆，先不考虑使用仿函数去实现大小堆兼容的问题。首先先来实现大堆，最后在代码基础上加上仿函数的设计就可以了。
+堆的插入元素和删除元素的时间复杂度是 O(logN) ，默认情况下优先级队列是大堆，先不考虑使用仿函数去实现大小堆兼容的问题。首先先来实现大堆，最后在代码基础上加上仿函数的设计就可以了。
 
-------
+---
 
 `priority_queue`与`queue`的区别主要是在`push`和`pop`上，优先级队列需要进行额外的**向上调整**和**向下调整**以满足堆序。
 
@@ -332,7 +328,7 @@ void adjust_down(int parent)
 
 具体实现细节在以前博客，这里不过多赘述。
 
-------
+---
 
 随后是其他一些简单接口。<font color = red>注意：top()的参数和返回值都是`const`</font>,保证数据不被修改。
 
@@ -353,11 +349,11 @@ const T &top() const
 }
 ```
 
------
+---
 
 这是固定死了的大堆，如果要使用小堆，难道需要再写一个类或者在需要时再修改吗？答案显然是否定的。
 
-在C语言阶段，可以用函数指针进行实现，通过对`comp()`函数的回调实现特定的需求。例如实现`bubble_sort()`函数时通过传入函数指针来指定比较方法。
+在 C 语言阶段，可以用函数指针进行实现，通过对`comp()`函数的回调实现特定的需求。例如实现`bubble_sort()`函数时通过传入函数指针来指定比较方法。
 
 ```cpp
 //通用冒泡排序
@@ -522,9 +518,9 @@ private:
 
 [deque 的文档介绍](https://cplusplus.com/reference/deque/deque/)
 
-> `deque`双端队列：**是一种双开口的“连续”空间的数据结构**，双开口的含义是：可以在头尾进行插入和删除操作，且时间复杂度是O(1)，与`vector`比较，头插效率高，不需要搬移元素；与`list`比较，空间利用率比较高。
+> `deque`双端队列：**是一种双开口的“连续”空间的数据结构**，双开口的含义是：可以在头尾进行插入和删除操作，且时间复杂度是 O(1)，与`vector`比较，头插效率高，不需要搬移元素；与`list`比较，空间利用率比较高。
 
-![image-20240423214112880](./stack和queue(priority_queue).assets/image-20240423214112880.png)
+![image-20240423214112880](<./stack和queue(priority_queue).assets/image-20240423214112880.png>)
 
 ### 4.1 deque 的实现原理
 
@@ -532,7 +528,7 @@ private:
 
 实际的`deque`类似于一个动态的二维数组，如下图所示：
 
-![image-20240423214404828](./stack和queue(priority_queue).assets/image-20240423214404828.png)
+![image-20240423214404828](<./stack和queue(priority_queue).assets/image-20240423214404828.png>)
 
 所有的小空间使用一个指针数组`map`进行管理的，相当于一个中控。
 
@@ -542,7 +538,7 @@ private:
 
 **双端队列**底层是一段假象的连续空间，实际上是分段连续的，为了维护其“**整体连续**”以及**随机访问**的假象，这个任务落在了`deque`的迭代器身上，因此`deque`的迭代器设计就比较复杂，如下图所示：
 
-![image-20240423214927742](./stack和queue(priority_queue).assets/image-20240423214927742.png)
+![image-20240423214927742](<./stack和queue(priority_queue).assets/image-20240423214927742.png>)
 
 `queue`的`iterator`封装了四个指针，分别是`cur、first、last、node`;
 
@@ -558,29 +554,29 @@ private:
 
 `deque`通过迭代器`start`和`finish`维护其整体结构：
 
-![image-20240423215552844](./stack和queue(priority_queue).assets/image-20240423215552844.png)
+![image-20240423215552844](<./stack和queue(priority_queue).assets/image-20240423215552844.png>)
 
 `deque::begin()`返回迭代器`start`，`deque::end()`返回迭代器`finish`,这两个迭代器都是`deque`的成员变量。
 
 如果要头插元素，而此时迭代器`start`中`node`指向为第一个`buffer`的首地址，则需要创建一个新的`buffer`空间。`node`指向`map`前一个空间，`*node`指向新`buffer`的首元素地址，同时更新`first、cur、last`。
 
-### 4.2 deque 与 vector和 list 的比较
+### 4.2 deque 与 vector 和 list 的比较
 
-`deque`的优势就是**头插头删，尾插尾删**，只有O(1)的时间复杂度。
+`deque`的优势就是**头插头删，尾插尾删**，只有 O(1)的时间复杂度。
 
 但由于其复杂的底层结构，导致实现其随机访问（即`[]`）很困难，有以下两点不足，或者说是冲突：
 
-- **若**规定`deque`的每一个`buffer`的空间一样大（为n），那么访问第i个数据的思路：如果i不是第一个`buffer`中的数据，则`i -= 第一个buffer的长度`后，第i个数据的下标为`[i/n, i%10]`。**若**规定`deque`的每一个`buffer`不一样大，则需要依次将i减去`buffer`的长度，直至i小于下一个`buffer`的长度，才能找到第i个元素对应的位置
+- **若**规定`deque`的每一个`buffer`的空间一样大（为 n），那么访问第 i 个数据的思路：如果 i 不是第一个`buffer`中的数据，则`i -= 第一个buffer的长度`后，第 i 个数据的下标为`[i/n, i%10]`。**若**规定`deque`的每一个`buffer`不一样大，则需要依次将 i 减去`buffer`的长度，直至 i 小于下一个`buffer`的长度，才能找到第 i 个元素对应的位置
 - 在`deque`中间插入数据，若需要每个`buffer`的空间一样大，需要挪动所有该位置前面或者后面的数据。若不需要每个`buffer`空间一样大，则可以只挪动当前`buffer`的元素。
 
 由此可以看到，对`deque`的`buffer`的长度是否一致的规定会影响**随机访问**和**中间插入元素**的效率。但无论怎么说，`deque`的随机访问是始终不如`vector`的，中间插入元素是始终不如`list`的。
 
-| 容器     | 优点                                                         | 缺点                                                         |
-| -------- | :----------------------------------------------------------- | ------------------------------------------------------------ |
-| `vector` | 物理结构连续存储 1.下标随机访问   2.缓存命中率高             | 1.前面部分插入删除效率低   2.扩容有损耗，还会存在一定程度空间浪费 |
-| `list`   | 物理结构不一定连续  1. 任意位置插入删除效率高   2. 按需申请空间， | 1.不支持下标随机访问    2.缓存命中率高                       |
-| `deque`  | 1.支持下标随机访问   2. 扩容损耗小   3. 头部和尾部对元素处理效率高  4. 缓存命中率高 | 1.中间插入效率低   2.下标随机访问不如`vector`                |
+| 容器     | 优点                                                                           | 缺点                                                            |
+| -------- | :----------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `vector` | 物理结构连续存储 1.下标随机访问 2.缓存命中率高                                 | 1.前面部分插入删除效率低 2.扩容有损耗，还会存在一定程度空间浪费 |
+| `list`   | 物理结构不一定连续 1. 任意位置插入删除效率高 2. 按需申请空间，                 | 1.不支持下标随机访问 2.缓存命中率高                             |
+| `deque`  | 1.支持下标随机访问 2. 扩容损耗小 3. 头部和尾部对元素处理效率高 4. 缓存命中率高 | 1.中间插入效率低 2.下标随机访问不如`vector`                     |
 
------
+---
 
 本章完。
