@@ -130,6 +130,95 @@ namespace Martix
            << endl;
     }
 
+    void _DFS(size_t starti, vector<bool> &visited)
+    {
+      // 打印start结点
+      if (visited[starti] == false)
+      {
+        cout << _vertexs[starti] << " ";
+        visited[starti] = true;
+      }
+
+      // 依次遍历start邻接的顶点
+      for (size_t i = 0; i < _vertexs.size(); ++i)
+      {
+        // 如果与start有边并且未被访问，dfs该顶点
+        if (_martix[starti][i] != MAX_W && !visited[i])
+        {
+          _DFS(i, visited);
+        }
+      }
+    }
+
+    // DFS 深度优先遍历
+    void DFS()
+    {
+      // 创建visited数组并初始化
+      vector<bool> visited;
+      visited.resize(_vertexs.size(), false);
+
+      for (size_t i = 0; i < _vertexs.size(); ++i)
+      {
+        if (!visited[i])
+          _DFS(i, visited);
+      }
+
+      cout << endl
+           << endl;
+    }
+
+    void _BFS(size_t starti, vector<bool> &visited)
+    {
+      // 创建队列用于广度优先遍历
+      queue<int> q;
+      q.push(starti);
+      visited[starti] = true;
+      int level = 1;
+      int levelSize = 1;
+
+      while (!q.empty())
+      {
+        cout << level << ": ";
+        while (levelSize--)
+        {
+          size_t cur = q.front();
+          cout << _vertexs[q.front()] << " ";
+          q.pop();
+
+          // 遍历得到cur的所有邻接顶点
+          for (size_t i = 0; i < _vertexs.size(); ++i)
+          {
+            if (_martix[cur][i] != MAX_W && !visited[i])
+            {
+              q.push(i);
+              visited[i] = true;
+            }
+          }
+        }
+
+        levelSize = q.size();
+        cout << endl;
+        level++;
+      }
+    }
+
+    // BFS 广度优先遍历
+    void BFS()
+    {
+      // 创建visited数组并初始化
+      vector<bool> visited;
+      visited.resize(_vertexs.size(), false);
+
+      for (size_t i = 0; i < _vertexs.size(); ++i)
+      {
+        if (!visited[i])
+          _BFS(i, visited);
+      }
+
+      cout << endl
+           << endl;
+    }
+
   private:
     map<V, int> _vIndexMap;    // 记录顶点对应下标(直接映射)
     vector<V> _vertexs;        // 顶点集合
@@ -154,6 +243,20 @@ namespace Martix
     g.DelEdge('2', '3');
 
     g.Print();
+  }
+
+  void TestGraphDBFS()
+  {
+    string a[] = {"张三", "李四", "王五", "赵六", "周七", "孙八"};
+    Graph<string, int, true> g1(a, sizeof(a) / sizeof(string));
+    g1.AddEdge("张三", "李四", 100);
+    g1.AddEdge("张三", "王五", 200);
+    g1.AddEdge("王五", "赵六", 30);
+    g1.AddEdge("王五", "周七", 30);
+    g1.AddEdge("赵六", "孙八", 60);
+
+    g1.BFS();
+    g1.DFS();
   }
 }
 
@@ -285,6 +388,77 @@ namespace LinkTable
       _AddEdge(srci, dsti, w);
     }
 
+    void _DelEdge(size_t srci, size_t dsti)
+    {
+      if (srci < 0 || dsti < 0 || srci >= _vertexs.size() || dsti >= _vertexs.size() || srci == dsti)
+      {
+        throw invalid_argument("删除位置非法");
+        return;
+      }
+
+      // 按照链表删除结点逻辑进行删除
+      Edge *cur = _linkTable[srci], *prev = nullptr;
+      while (cur)
+      {
+        if (cur->_dstIndex == dsti)
+        {
+          if (prev == nullptr)
+          {
+            // 头删
+            _linkTable[srci] = cur->_next;
+            delete cur;
+            break;
+          }
+          else
+          {
+            prev->_next = cur->_next;
+            delete cur;
+            break;
+          }
+        }
+        prev = cur;
+        cur = cur->_next;
+      }
+
+      // 如果是无向图，还需要对称删除
+      if (Direction == false)
+      {
+        Edge *cur = _linkTable[dsti], *prev = nullptr;
+        while (cur)
+        {
+          if (cur->_dstIndex == srci)
+          {
+            if (prev == nullptr)
+            {
+              // 头删
+              _linkTable[dsti] = cur->_next;
+              delete cur;
+              break;
+            }
+            else
+            {
+              prev->_next = cur->_next;
+              delete cur;
+              break;
+            }
+          }
+          prev = cur;
+          cur = cur->_next;
+        }
+      }
+    }
+
+    // 删除边，src --> dst
+    void DelEdge(const V &src, const V &dst)
+    {
+      // 得到起点和终点的下标
+      int srci = GetVertexIndex(src);
+      int dsti = GetVertexIndex(dst);
+
+      // 删除对应边
+      _DelEdge(srci, dsti);
+    }
+
     // 打印
     void Print()
     {
@@ -315,6 +489,79 @@ namespace LinkTable
            << endl;
     }
 
+    void _DFS(size_t starti, vector<bool> &visited)
+    {
+      if (!visited[starti])
+      {
+        cout << _vertexs[starti] << " ";
+        visited[starti] = true;
+      }
+
+      // 遍历邻接表
+      for (Edge *cur = _linkTable[starti]; cur; cur = cur->_next)
+      {
+        if (!visited[cur->_dstIndex])
+          _DFS(cur->_dstIndex, visited);
+      }
+    }
+
+    // DFS
+    void DFS()
+    {
+      vector<bool> visited;
+      visited.resize(_vertexs.size(), false);
+
+      for (size_t i = 0; i < _vertexs.size(); ++i)
+      {
+        if (!visited[i])
+          _DFS(i, visited);
+      }
+
+      cout << endl
+           << endl;
+    }
+
+    void _BFS(size_t starti, vector<bool> &visited)
+    {
+      // 创建队列
+      queue<int> q;
+      q.push(starti);
+      visited[starti] = true;
+
+      while (!q.empty())
+      {
+        Edge *cur = _linkTable[q.front()];
+        cout << _vertexs[q.front()] << " ";
+        q.pop();
+
+        while (cur)
+        {
+          if (!visited[cur->_dstIndex])
+          {
+            q.push(cur->_dstIndex);
+            visited[cur->_dstIndex] = true;
+          }
+          cur = cur->_next;
+        }
+      }
+    }
+
+    // BFS
+    void BFS()
+    {
+      vector<bool> visited;
+      visited.resize(_vertexs.size(), false);
+
+      for (size_t i = 0; i < _vertexs.size(); ++i)
+      {
+        if (!visited[i])
+          _BFS(i, visited);
+      }
+
+      cout << endl
+           << endl;
+    }
+
   private:
     map<V, int> _vIndexMap;    // 顶点对应下标(直接映射)
     vector<V> _vertexs;        // 顶点集合
@@ -335,9 +582,23 @@ namespace LinkTable
 
     g.Print();
 
-    // g.DelEdge('0', '1');
-    // g.DelEdge('2', '3');
+    g.DelEdge('0', '1');
+    g.DelEdge('2', '3');
 
-    // g.Print();
+    g.Print();
+  }
+
+  void TestGraphDBFS()
+  {
+    string a[] = {"张三", "李四", "王五", "赵六", "周七", "孙八"};
+    Graph<string, int> g1(a, sizeof(a) / sizeof(string));
+    g1.AddEdge("张三", "李四", 100);
+    g1.AddEdge("张三", "王五", 200);
+    g1.AddEdge("王五", "赵六", 30);
+    g1.AddEdge("王五", "周七", 30);
+    g1.AddEdge("赵六", "孙八", 60);
+
+    g1.BFS();
+    g1.DFS();
   }
 }

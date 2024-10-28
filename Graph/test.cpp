@@ -12,6 +12,9 @@ using namespace LinkTable;
 int main()
 {
   // Martix::TestGraph();
-  LinkTable::TestGraph();
+  // LinkTable::TestGraph();
+  Martix::TestGraphDBFS();
+  LinkTable::TestGraphDBFS();
+
   return 0;
 }
