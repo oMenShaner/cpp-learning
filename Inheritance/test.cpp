@@ -125,85 +125,147 @@ using namespace std;
 //    cout << &b1._cnt << endl;
 //}
 
-class Person {
+//class Person {
+//public:
+//    Person(string name = "张三", int age = 20)
+//        :_name(name)
+//        ,_age(age)
+//    {
+//        cout << "Person()" << endl;
+//    }
+//    Person(const Person& p)
+//        :_name(p._name)
+//        ,_age(p._age)
+//    {
+//        cout << "Person(const Person& p)" << endl;
+//    }
+//    Person& operator=(const Person& p)
+//    {
+//        cout << "Person& operator=(const Person& p)" << endl;
+//        if (this != &p)
+//        {
+//            _name = p._name;
+//            _age = p._age;
+//        }
+//        return *this;
+//    }
+//    ~Person()
+//    {
+//        cout << "~Person()" << endl;
+//    }
+//protected:
+//    string _name;
+//    int _age;
+//};
+//
+//class Student : public Person {
+//public:
+//    Student(int sid = 1001) // 构造函数1
+//        :_sid(sid)
+//    {
+//        cout << "Student(sid)" << endl;
+//    }
+//    Student(string name, int age, int sid)  // 构造函数2
+//        :Person(name, age)
+//        , _sid(sid)
+//    {
+//        cout << "Student(name,age,sid)" << endl;
+//    }
+//    //Student(string name, int age, int sid)  // 构造函数3
+//    //    :_name(name)
+//    //    ,_age(age)
+//    //    , _sid(sid)
+//    //{
+//    //    cout << "Student(name,age,sid)" << endl;
+//    //}
+//    Student(const Student& s)
+//        :Person(s)      // 派生类必须调用基类的拷贝构造
+//        , _sid(s._sid)
+//    {
+//        cout << "Student(const Student& s)" << endl;
+//    }
+//    Student& operator=(const Student& s)
+//    {
+//        cout << "Student& operator=(const Student& s)" << endl;
+//        if (this != &s) 
+//        {
+//            Person::operator=(s);   // 显式调用基类赋值重载
+//            _sid = s._sid;
+//        }
+//        return *this;
+//    }
+//    ~Student()
+//    {
+//        // Person::~Person();
+//        cout << "~Student()" << endl;
+//    }
+//protected:
+//    int _sid;
+//};
+//
+//int main()
+//{   
+//    Student s1;
+//}
+
+//class Person {
+//public:
+//    string _name;   // 姓名
+//};
+//
+//// 虚拟继承
+//class Student : virtual public Person {
+//protected:
+//    int _num;   // 学号
+//};
+//
+//// 虚拟继承
+//class Teacher : virtual public Person {
+//protected:
+//    int _id;    // 职工编号
+//};
+//
+//class Assistant : public Student, public Teacher {
+//public:
+//    string _majorCourse;    // 主修课程
+//};
+//
+//int main()
+//{
+//    Assistant a;
+//    a._name = "Peter"; 
+//
+//    a.Student::_name = "xxx";
+//    a.Teacher::_name = "yyy";
+//}
+
+class A{
 public:
-    Person(string name = "张三", int age = 20)
-        :_name(name)
-        ,_age(age)
-    {
-        cout << "Person()" << endl;
-    }
-    Person(const Person& p)
-        :_name(p._name)
-        ,_age(p._age)
-    {
-        cout << "Person(const Person& p)" << endl;
-    }
-    Person& operator=(const Person& p)
-    {
-        cout << "Person& operator=(const Person& p)" << endl;
-        if (this != &p)
-        {
-            _name = p._name;
-            _age = p._age;
-        }
-        return *this;
-    }
-    ~Person()
-    {
-        cout << "~Person()" << endl;
-    }
-protected:
-    string _name;
-    int _age;
+    int _a;
 };
 
-class Student : public Person {
+class B :virtual public A {
 public:
-    Student(int sid = 1001) // 构造函数1
-        :_sid(sid)
-    {
-        cout << "Student(sid)" << endl;
-    }
-    Student(string name, int age, int sid)  // 构造函数2
-        :Person(name, age)
-        , _sid(sid)
-    {
-        cout << "Student(name,age,sid)" << endl;
-    }
-    //Student(string name, int age, int sid)  // 构造函数3
-    //    :_name(name)
-    //    ,_age(age)
-    //    , _sid(sid)
-    //{
-    //    cout << "Student(name,age,sid)" << endl;
-    //}
-    Student(const Student& s)
-        :Person(s)      // 派生类必须调用基类的拷贝构造
-        , _sid(s._sid)
-    {
-        cout << "Student(const Student& s)" << endl;
-    }
-    Student& operator=(const Student& s)
-    {
-        cout << "Student& operator=(const Student& s)" << endl;
-        if (this != &s) 
-        {
-            Person::operator=(s);   // 显式调用基类赋值重载
-            _sid = s._sid;
-        }
-        return *this;
-    }
-    ~Student()
-    {
-        // Person::~Person();
-        cout << "~Student()" << endl;
-    }
-protected:
-    int _sid;
+    int _b;
+};
+
+class C :virtual public A {
+public:
+    int _c;
+};
+
+class D :public B, public C {
+public :
+    int _d;
 };
 
 int main()
-{   
-    Student s1;
+{
+    D d;
+    d.B::_a = 1;
+    d.C::_a = 2;
+    d._b = 3;
+    d._c = 4;
+    d._d = 5;
+    return 0;
 }
