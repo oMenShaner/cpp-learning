@@ -1,11 +1,12 @@
 #pragma once
+#include <iostream>
+using namespace std;
 
 // 枚举值表示颜色
 enum Colour {
     RED,
     BLACK
 };
-
 
 template<class T>
 struct RBTreeNode
@@ -25,12 +26,126 @@ struct RBTreeNode
     }
 };
 
+template<class T,class Ref, class Ptr>
+class TreeIterator {
+    typedef RBTreeNode<T> Node;
+    typedef TreeIterator<T, Ref, Ptr> Self;
+    Node* _node;
+    Node* _root;
+public:
+    TreeIterator(Node *node, Node *root)
+        :_node(node)
+        ,_root(root)
+    { }
+
+    Ref operator*()
+    {
+        return _node->_data;
+    }
+
+    Ptr operator->()
+    {
+        return &(_node->_data);
+    }
+
+    bool operator!=(const Self& s)const
+    {
+        return _node != s._node;
+    }
+
+    bool operator==(const Self& s)const
+    {
+        return _node == s._node;
+    } 
+
+    Self& operator--()
+    {
+        // 当前节点为空
+        // 当前结点左不为空,下一个是其左子树的最大结点
+        // 当前结点左为空,下一个是为右孩子的祖先结点
+        if (_node == nullptr)
+        {
+            // --end(),走到中序的最后一个结点
+            Node* rightMost = _root;
+            while (rightMost && rightMost->_right)
+            {
+                rightMost = rightMost->_right;
+            }
+            _node = rightMost;
+        }
+        else if (_node->_left)
+        {
+            Node* cur = _node->_left;
+            while (cur->_right)
+            {
+                cur = cur->_right;
+            }
+            _node = cur;
+        }
+        else
+        {
+            Node* cur = _node;
+            Node* parent = cur->_parent;
+            while (parent && cur == parent->_left)
+            {
+                cur = parent;
+                parent = parent->_parent;
+            }
+            _node = parent;
+        }
+        return *this;
+    }
+    Self& operator++()
+    {
+        // 当前结点右不为空,下一个是当前结点右子树的最小结点
+        // 当前结点右为空,下一个是为左孩子的祖先节点
+        if (_node->_right)
+        {
+            Node* cur = _node->_right;
+            while (cur->_left)
+            {
+                cur = cur->_left;
+            }
+            _node = cur;
+        }
+        else
+        {
+            Node* cur = _node;
+            Node* parent = cur->_parent;
+            while (parent && cur == parent->_right)
+            {
+                cur = parent;
+                parent = parent->_parent;
+            }
+            _node = parent;
+        }
+        return *this;
+    }
+};
+
 template<class K, class T, class KeyOfT>
 class RBTree
 {
-    typedef RBTreeNode<T> Node;
 public:
-    bool Insert(const T& data)
+    typedef typename RBTreeNode<T> Node;
+    typedef typename TreeIterator<T, T&, T*> Iterator;
+public:
+    Iterator Begin()
+    {
+        Node* min = _root;
+        while (min && min->_left)
+        {
+            min = min->_left;
+        }
+        return Iterator(min, _root);
+    }
+
+    Iterator End()
+    {
+        return Iterator(nullptr, _root);
+    }
+
+    pair<Iterator, bool>Insert(const T& data)
     {
         KeyOfT kot;
         // 1.树为空，直接赋值
@@ -39,7 +154,7 @@ public:
             _root = new Node(data);
             _root->_col = BLACK;
 
-            return true;
+            return {Iterator(_root, _root), true};
         }
 
         // 2.树非空，根据二叉搜索树规则找到对应插入位置
@@ -59,12 +174,13 @@ public:
             }
             else
             {
-                return false;
+                return { Iterator(cur, _root), false };
             }
         }
 
         // 默认新结点为红，同时更新其parent指针
         cur = new Node(data);
+        Node* newNode = cur;
         cur->_col = RED;
         if (kot(data) < kot(parent->_data))
         {
@@ -172,15 +288,10 @@ public:
 
         // 不论如何，保持根节点为黑
         _root->_col = BLACK;
-        return true;
-    }
-    void InOrder()
-    {
-        _InOrder(_root);
-        cout << endl;
+        return { Iterator(newNode, _root), true };
     }
 
-    Node* Find(const K& key)
+    Iterator Find(const K& key)
     {
         KeyOfT kot;
         Node* cur = _root;
@@ -196,10 +307,10 @@ public:
             }
             else
             {
-                return cur;
+                return Iterator(cur, _root);
             }
         }
-        return nullptr;
+        return Iteraotr(nullptr, _root);
     }
     
 private:
