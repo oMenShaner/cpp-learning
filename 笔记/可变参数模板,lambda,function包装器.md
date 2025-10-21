@@ -453,3 +453,172 @@ int main()
 **核心作用**
 
 C++ 中 “可调用对象” 的类型千差万别（如普通函数的类型、Lambda 的匿名类型、函数对象的自定义类型等），`std::function` 可以将这些不同类型的可调用对象 **包装成同一种类型** ，解决了 “类型不统一” 的问题。
+
+**基本语法**
+
+```cpp
+std::function<返回值类型(参数类型列表)> 变量名;
+```
+
+* 包装普通函数
+
+```cpp
+// 普通函数
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    // 包装普通函数
+    function<int(int, int)> func = add;
+    cout << func(3, 5) << endl; // 输出
+    return 0;
+}
+```
+
+* 包装lambda表达式
+
+  ```cpp
+  int main(){
+      auto mul = [](int a, int b) { return a * b; };
+
+      // 包装lambda表达式
+      function<int(int, int)> func = mul;
+      cout << func(3, 5) << endl; // 输出15
+      return 0;
+  }
+
+  ```
+* 包装函数对象(仿函数)
+
+  ```cpp
+  // 函数对象,重载operator
+  struct Divide {
+      int operator()(int a, int b) const {
+          return a / b;
+      }
+  };
+
+  int main() {
+      // 包装函数对象
+      function<int(int, int)> func = Divide();
+      cout << func(10, 2) << endl;    // 输出5
+      return 0;
+  }
+  ```
+* 包装类的成员函数
+
+  ```cpp
+  class Calculator {
+  public:
+      int sub(int a, int b) {
+          return a - b;
+      }
+  };
+
+  int main()
+  {
+      Calculator calc;
+      // 包装成员函数,成员函数第一个参数为this指针
+      function<int(Calculator*, int, int)> func1 = &Calculator::sub;
+      function<int(Calculator, int, int)> func2 = &Calculator::sub;
+      function<int(Calculator&&, int, int)> func3 = &Calculator::sub;
+
+      // 调用,输出为8
+      cout << func1(&calc, 10, 2) << endl;
+      cout << func2(calc, 10, 2) << endl;
+      cout << func3(move(calc), 10, 2) << endl;
+      cout << func3(Calculator(), 10, 2) << endl;
+
+      return 0;
+  }
+  ```
+
+  由于成员函数第一个参数隐含this指针,使用 `function`进行包装时,要注意第一个参数不要落下,以上三种方式都可以作为参数.
+
+## bind
+
+> `std::bind` 是 C++11 引入的函数绑定工具（位于 `<functional>` 头文件），用于 **将可调用对象与部分参数预先绑定** ，生成一个新的可调用对象（“绑定器”）。它的核心作用是灵活调整函数的参数列表（如固定部分参数、调整参数顺序），适配不同场景的调用需求。
+
+**基本语法**
+
+```cpp
+std::bind(可调用对象, 参数列表);
+```
+
+* **可调用对象** ：可以是普通函数、Lambda、函数对象、成员函数指针等。
+* **参数列表** ：包含具体值或占位符（`std::placeholders::_1, _2, ...`），用于指定新函数的参数如何传递给原对象。
+
+`std::bind`的关键是通过**通过占位符**控制参数传递, `_1`表示第一个未固定参数,`_2` `_3`等同理
+
+通过下列形式引入占位符：
+
+```cpp
+using namespace std::placeholders; // 引入占位符 _1, _2...
+```
+
+```cpp
+using std::placeholders::_1;
+using std::placeholders::_2;
+```
+
+1. 固定参数
+
+   将函数的部分参数预先固定，新生成的函数只需传入剩余参数。
+
+```cpp
+// 原函数:计算a-b
+int sub(int a, int b) {
+    return a - b;
+}
+
+int main() {
+    // 绑定第二个参数为 5，新函数签名变为 int(int)（仅需传入 a）
+    auto minus5 = bind(sub, _1, 5);
+    cout << minus5(10) << endl; // 输出10
+
+    // 绑定第一个参数为 20，新函数签名变为 int(int)（仅需传入 b）
+    auto minusFrom20 = bind(sub, 20, _1);
+    cout << minusFrom20(7) << endl; // 输出13
+    return 0;
+}
+```
+
+2. 调整参数顺序
+
+   通过占位符重新排列参数传递的顺序。
+
+```cpp
+// 原函数:a/b
+double divide(double a, double b) {
+    return a / b;
+}
+
+int main() {
+    // 交换参数顺序：新函数的 _1 传给原函数的 b，_2 传给原函数的 a
+    auto invert_divide = bind(divide, _2, _1);
+    cout << invert_divide(2, 10) << endl;   // 相当于mul(10, 2)
+    return 0;
+}
+```
+
+3. 绑定成员函数（需绑定 `this`指针）
+
+    非静态成员函数隐含`this` 指针作为第一个参数，`std::bind` 需显式绑定对象（或对象指针 / 引用）。
+
+```cpp
+class Math {
+public:
+    // 成员函数：计算 a * b
+    int multiply(int a, int b) {
+        return a * b;
+    }
+};
+
+int main() {
+    Math math;
+    // 绑定对象指针 &math 和成员函数，新函数签名为 int(int, int)
+    auto bound_multiply = bind(&Math::multiply, &math, _1, _2);
+    cout << bound_multiply(3, 4) << endl;   // 等价于 math.multiply(3,4)
+}
+```

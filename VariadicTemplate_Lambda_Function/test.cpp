@@ -1,7 +1,7 @@
-//#include <iostream>
-//#include <vector>
-//#include <string.h>
-//using namespace std;
+#include <iostream>
+#include <vector>
+#include <string.h>
+using namespace std;
 //template<class ...Args>
 //void func(Args... args){ }
 //
@@ -164,89 +164,195 @@
 //    return 0;
 //}
 
-#include <iostream>
+//#include <iostream>
+//
+//using namespace std;
+//
+//int main()
+//{
+//    // f1:空捕获：无法访问x
+//    int x = 10;
+//    auto f1 = [] {
+//        // cout << x; // 错误：未捕获x
+//        cout << "无外部变量\n";
+//    };
+//    f1();
+//
+//    // f2,f3:按值捕获或默认按值[=]
+//    int a = 10, b = 20;
+//    // 捕获a和b的副本（显式指定）
+//    auto f2 = [a, b]() {
+//        cout << a + b << endl;
+//        };
+//    // 默认按值捕获所有外部变量（等价于捕获a和b）
+//    auto f3 = [=]() {
+//        cout << a * b << endl;
+//        };
+//    f2();
+//    f3();
+//
+//    // f4:配合mutable修改副本
+//    auto f4 = [x]() mutable {
+//        x = 5; // 允许修改副本（仅内部有效）
+//        std::cout << "内部x=" << x; // 输出5
+//        };
+//    f4();
+//    std::cout << "外部x=" << x << endl; // 输出10（原变量不变）
+//
+//    // f5,f6:按引用捕获 [&变量名] 或默认按引用 [&]
+//    int c = 30, d = 40;
+//    // 显式按引用捕获c和d
+//    auto f5 = [&c, &d]() {
+//        c = 35;
+//        d = 50; // 直接修改
+//        };
+//    // 默认按引用捕获所有外部变量
+//    auto f6 = [&] {
+//        cout << c + d << endl;
+//        };
+//
+//    f5();
+//    f6();
+//
+//    // f7,f8:混合捕获
+//    x = 1;
+//    int y = 2, z = 3;
+//    // 默认按值捕获所有，仅y按引用捕获
+//    auto f7 = [=, &y] {
+//        // x = 10; // 错误：x按值捕获，不可修改
+//        y = 20;   // 正确：y按引用捕获，可修改
+//        cout << x + y + z << endl; // 1+20+3=24
+//        };
+//    // 默认按引用捕获所有，仅z按值捕获
+//    auto f8 = [&, z] {
+//        x = 10;   // 正确：x按引用捕获
+//        // z = 30; // 错误：z按值捕获，不可修改
+//        };
+//    f7();
+//    f8();
+//
+//    // f9:捕获this指针 [this]（类内使用）
+//    class MyClass {
+//    private:
+//        int num = 100;
+//    public:
+//        void test() {
+//            // 显式捕获this
+//            auto f8 = [this] {
+//                num = 200; // 访问并修改成员变量
+//                cout << num << endl;
+//                };
+//            f8(); // 输出200
+//        }
+//    };
+//    MyClass obj;
+//    obj.test();
+//
+//    return 0;
+//}
 
-using namespace std;
+#include <functional>
 
-int main()
-{
-    // f1:空捕获：无法访问x
-    int x = 10;
-    auto f1 = [] {
-        // cout << x; // 错误：未捕获x
-        cout << "无外部变量\n";
-    };
-    f1();
+//// 普通函数
+//int add(int a, int b) {
+//    return a + b;
+//}
+//
+//int main() {
+//    // 包装普通函数
+//    function<int(int, int)> func = add;
+//    cout << func(3, 5) << endl; // 输出
+//    return 0;
+//}
 
-    // f2,f3:按值捕获或默认按值[=]
-    int a = 10, b = 20;
-    // 捕获a和b的副本（显式指定）
-    auto f2 = [a, b]() {
-        cout << a + b << endl;
-        };
-    // 默认按值捕获所有外部变量（等价于捕获a和b）
-    auto f3 = [=]() {
-        cout << a * b << endl;
-        };
-    f2();
-    f3();
+//int main(){
+//    auto mul = [](int a, int b) { return a * b; };
+//
+//    // 包装lambda表达式
+//    function<int(int, int)> func = mul;
+//    cout << func(3, 5) << endl; // 输出15
+//    return 0;
+//}
 
-    // f4:配合mutable修改副本
-    auto f4 = [x]() mutable {
-        x = 5; // 允许修改副本（仅内部有效）
-        std::cout << "内部x=" << x; // 输出5
-        };
-    f4();
-    std::cout << "外部x=" << x << endl; // 输出10（原变量不变）
+//// 函数对象,重载operator
+//struct Divide {
+//    int operator()(int a, int b) const {
+//        return a / b;
+//    }
+//};
+//
+//int main() {
+//    // 包装函数对象
+//    function<int(int, int)> func = Divide();
+//    cout << func(10, 2) << endl;    // 输出5
+//    return 0;
+//}
 
-    // f5,f6:按引用捕获 [&变量名] 或默认按引用 [&]
-    int c = 30, d = 40;
-    // 显式按引用捕获c和d
-    auto f5 = [&c, &d]() {
-        c = 35;
-        d = 50; // 直接修改
-        };
-    // 默认按引用捕获所有外部变量
-    auto f6 = [&] {
-        cout << c + d << endl;
-        };
+//class Calculator {
+//public:
+//    int sub(int a, int b) {
+//        return a - b;
+//    }
+//};
+//
+//int main()
+//{
+//    Calculator calc;
+//    // 包装成员函数,成员函数第一个参数为this指针
+//    function<int(Calculator*, int, int)> func1 = &Calculator::sub;
+//    function<int(Calculator, int, int)> func2 = &Calculator::sub;
+//    function<int(Calculator&&, int, int)> func3 = &Calculator::sub;
+//
+//    // 调用,输出为8
+//    cout << func1(&calc, 10, 2) << endl;
+//    cout << func2(calc, 10, 2) << endl;
+//    cout << func3(move(calc), 10, 2) << endl;
+//    cout << func3(Calculator(), 10, 2) << endl;
+//
+//    return 0;
+//}
 
-    f5();
-    f6();
+using namespace std::placeholders; // 引入占位符 _1, _2...
+//using std::placeholders::_1;
+//// 原函数:计算a-b
+//int sub(int a, int b) {
+//    return a - b;
+//}
+//
+//int main() {
+//    // 绑定第二个参数为 5，新函数签名变为 int(int)（仅需传入 a）
+//    auto minus5 = bind(sub, _1, 5);
+//    cout << minus5(10) << endl; // 输出10
+//
+//    // 绑定第一个参数为 20，新函数签名变为 int(int)（仅需传入 b）
+//    auto minusFrom20 = bind(sub, 20, _1);
+//    cout << minusFrom20(7) << endl; // 输出13
+//    return 0;
+//}
 
-    // f7,f8:混合捕获
-    x = 1;
-    int y = 2, z = 3;
-    // 默认按值捕获所有，仅y按引用捕获
-    auto f7 = [=, &y] {
-        // x = 10; // 错误：x按值捕获，不可修改
-        y = 20;   // 正确：y按引用捕获，可修改
-        cout << x + y + z << endl; // 1+20+3=24
-        };
-    // 默认按引用捕获所有，仅z按值捕获
-    auto f8 = [&, z] {
-        x = 10;   // 正确：x按引用捕获
-        // z = 30; // 错误：z按值捕获，不可修改
-        };
-    f7();
-    f8();
+//// 原函数:a/b
+//double divide(double a, double b) {
+//    return a / b;
+//}
+//
+//int main() {
+//    // 交换参数顺序：新函数的 _1 传给原函数的 b，_2 传给原函数的 a
+//    auto invert_divide = bind(divide, _2, _1);
+//    cout << invert_divide(2, 10) << endl;   // 相当于mul(10, 2)
+//    return 0;
+//}
 
-    // f9:捕获this指针 [this]（类内使用）
-    class MyClass {
-    private:
-        int num = 100;
-    public:
-        void test() {
-            // 显式捕获this
-            auto f8 = [this] {
-                num = 200; // 访问并修改成员变量
-                cout << num << endl;
-                };
-            f8(); // 输出200
-        }
-    };
-    MyClass obj;
-    obj.test();
+class Math {
+public:
+    // 成员函数：计算 a * b
+    int multiply(int a, int b) {
+        return a * b;
+    }
+};
 
-    return 0;
+int main() {
+    Math math;
+    // 绑定对象指针 &math 和成员函数，新函数签名为 int(int, int)
+    auto bound_multiply = bind(&Math::multiply, &math, _1, _2);
+    cout << bound_multiply(3, 4) << endl;   // 等价于 math.multiply(3,4)
 }
